@@ -3,7 +3,7 @@ DATE        :   04/08/2025
 AUTHOR      :   Jesus Lopez Mesia
 LINKEDIN    :   https://www.linkedin.com/in/susejzepol/
 MICROSOFT
-LERN        :   https://learn.microsoft.com/es-es/users/JessMiguelLopezmesia-5264
+LEARN       :   https://learn.microsoft.com/es-es/users/JessMiguelLopezmesia-5264
 ---------------------------------------
 DESCRIPTION
 ---------------------------------------
