@@ -1,0 +1,49 @@
+param pName string
+param pLocation string
+param pVmSize string = 'standard_a2_v2'
+param pComputerName string
+@secure()
+param pUserName string
+@secure()
+param pPassword string
+
+resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
+  name: pName
+  location: pLocation
+  properties: {
+    hardwareProfile: {
+      vmSize: pVmSize
+    }
+    osProfile: {
+      computerName: pComputerName
+      adminUsername: pUserName
+      adminPassword: pPassword
+    }
+    storageProfile: {
+      imageReference: {
+        publisher: 'MicrosoftWindowsServer'
+        offer: 'WindowsServer'
+        sku: '2012-R2-Datacenter'
+        version: 'latest'
+      }
+      osDisk: {
+        name: 'name'
+        caching: 'ReadWrite'
+        createOption: 'FromImage'
+      }
+    }
+    networkProfile: {
+      networkInterfaces: [
+        {
+          id: 'id'
+        }
+      ]
+    }
+    diagnosticsProfile: {
+      bootDiagnostics: {
+        enabled: true
+        storageUri:  'storageUri'
+      }
+    }
+  }
+}
