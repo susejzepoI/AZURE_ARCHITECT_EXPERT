@@ -1,11 +1,12 @@
-param pName string
-param pLocation string
+param pLocation string = resourceGroup().location
 param pVmSize string = 'standard_a2_v2'
 param pComputerName string
 @secure()
 param pUserName string
 @secure()
 param pPassword string
+
+var pName = 'vm-${uniqueString(resourceGroup().id)}'
 
 resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
   name: pName
