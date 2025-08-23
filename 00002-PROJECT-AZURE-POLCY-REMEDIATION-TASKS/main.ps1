@@ -1,7 +1,9 @@
 [CmdletBinding()]
 param (
     [Parameter()]
-    [string]$pSubscriptionName = 'Suscripción de Plataformas de MSDN'
+    [string]$pSubscriptionName      = 'Suscripción de Plataformas de MSDN',
+    [Parameter()]
+    [string]$pManagementGroupName   = 'DEV'
 
 )
 #JLopez-20250823: Defining the resource groups to be created.
@@ -19,25 +21,26 @@ az deployment sub create `
 
 az deployment sub create `
     --name '00002-Deployment-2' `
-    --location 'brazilsouth' `
+    --location 'westus' `
     --template-file '../infra/bicep/01.- resource-group/resource-group.bicep' `
-    --parameters pName=$rg2 pLocation='brazilsouth' `
+    --parameters pName=$rg2 pLocation='westus' `
     --subscription $pSubscriptionName
 
 az deployment sub create `
     --name '00002-Deployment-3' `
     --location 'westus' `
     --template-file '../infra/bicep/01.- resource-group/resource-group.bicep' `
-    --parameters pName=$rg2 pLocation='westus' `
+    --parameters pName=$rg3 pLocation='westus' `
     --subscription $pSubscriptionName
 
 #JLopez-20250823: Deploying the azure policy definition
-az deployment sub create `
+#                 to deploy this template you should have a management group created. 
+az deployment mg create `
     --name '00002-Deployment-4' `
     --location 'eastus' `
-    --template-file '../.policy-definitions/azure-policy-enforce-tags.bicep' `
-    --parameters pName='enforce-tags-rg1' pTagName='Project' pTagValue='az305' `
-    --subscription $pSubscriptionName
+    --template-file './.policy-definitions/azure-policy-enforce-tags.bicep' `
+    --parameters pName='enforce-tags-rg1' pDisplayName='Eforce tags' pCategory='Tags' pTagName='Project' pTagValue='az305' `
+    --management-group-id $pManagementGroupName
 
 #JLopez-20250819: Deploying the network interface and the virtual network.
 # az deployment group create `
