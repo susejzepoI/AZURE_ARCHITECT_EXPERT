@@ -33,14 +33,13 @@ az deployment sub create `
     --parameters pName=$rg3 pLocation='westus' `
     --subscription $pSubscriptionName
 
-#JLopez-20250823: Deploying the azure policy definition
-#                 to deploy this template you should have a management group created. 
-az deployment mg create `
+#JLopez-20250823: Deploying the azure policy definition.
+az deployment sub create `
     --name '00002-Deployment-4' `
     --location 'eastus' `
     --template-file './.policy-definitions/azure-policy-enforce-tags.bicep' `
     --parameters pName='enforce-tags-rg1' pDisplayName='Eforce tags' pCategory='Tags' pTagName='Project' pTagValue='az305' `
-    --management-group-id $pManagementGroupName
+    --subscription $pSubscriptionName
 
 #JLopez-20250819: Deploying the network interface and the virtual network.
 # az deployment group create `

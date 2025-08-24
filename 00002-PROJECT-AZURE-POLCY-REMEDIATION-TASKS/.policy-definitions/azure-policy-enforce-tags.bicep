@@ -1,5 +1,5 @@
 
-targetScope = 'managementGroup'
+targetScope = 'subscription'
 
 param pName           string
 param pDisplayName    string
@@ -26,7 +26,7 @@ resource policyForceTags 'Microsoft.Authorization/policyDefinitions@2020-03-01' 
   properties: {
     displayName: pDisplayName
     policyType: 'Custom'
-    mode: 'All'
+    mode: 'Indexed'
     description: pDescription
     metadata: {
       version: pVersion
