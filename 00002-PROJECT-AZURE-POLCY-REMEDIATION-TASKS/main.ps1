@@ -47,8 +47,14 @@ az deployment sub create `
     --name '00002-Deployment-4' `
     --location 'eastus' `
     --template-file './.policy-definitions/azure-policy-enforce-tags.bicep' `
-    --parameters pName=$PolicyName pDisplayName=$PolicyDisplayName pCategory='Tags' pTagName='Project' pTagValue='az305' `
-    --subscription $pSubscriptionName
+    --subscription $pSubscriptionName `
+    --parameters pName=$PolicyName `
+                    pDisplayName=$PolicyDisplayName `
+                        pCategory='Tags' `
+                            pTagName='Project' `
+                                pTagValue='az305' `
+                                    pVersion=$policyVersion 
+
 
 #JLopez-20250825: Assignin the policy definition.
 $policyID = $(az policy definition list --query "[?name=='$PolicyName'].id" -o tsv)
@@ -61,10 +67,9 @@ az deployment group create `
     --resource-group $rg1 `
     --parameters pAssignmentName=$PolicyAssignmentName `
                 pDefinitionID=$policyID `
-                    pVersion=$policyVersion `
-                        pDisplayName="Enforce tags assignment to $rg1" `
-                            pDescription="This policy enforce tags to all the resources in the resource group: $rg1" `
-                                pMessage='Adding default tags to this resource.' 
+                    pDisplayName="Enforce tags assignment to $rg1" `
+                        pDescription="This policy enforce tags to all the resources in the resource group: $rg1" `
+                            pMessage='Adding default tags to this resource.' 
     
 #JLopez-20250819: Deploying the network interface and the virtual network.
 # az deployment group create `
