@@ -9,6 +9,10 @@ source: https://learn.microsoft.com/en-us/azure/governance/policy/assign-policy-
 */
 resource policyAssignment 'Microsoft.Authorization/policyAssignments@2024-05-01' = {
   name: pAssignmentName
+  location: resourceGroup().location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     displayName: pDisplayName
     description: pDescription
