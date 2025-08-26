@@ -60,6 +60,8 @@ resource policyForceTags 'Microsoft.Authorization/policyDefinitions@2020-03-01' 
         effect: 'modify'
         details: {
           roleDefinitionIds: [
+            //JLopez-20250825: The b24988ac-6180-42a0-ab88-20f7382dd24c represents the Contributor role.
+            //                 You can verify it using the following command: az role definition list --name b24988ac-6180-42a0-ab88-20f7382dd24c
             subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c') // Contributor
           ]
           operations: [
