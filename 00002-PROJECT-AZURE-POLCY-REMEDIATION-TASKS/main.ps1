@@ -19,6 +19,7 @@ $PolicyDisplayName      = 'Eforce tags 1'
 $policyVersion          = '1.0.0'
 $PolicyName             = 'enforce-tags-rg1-1'
 $PolicyAssignmentName   = $PolicyName + '-assignment'
+$vmGenericName          = 'vm-00002'
 
 #JLopez-20250508: Deploying the resource group at the subscription level, using a bicep template.
 az deployment sub create `
@@ -59,7 +60,7 @@ az deployment sub create `
 #JLopez-20250825: Assignin the policy definition.
 $policyID = $(az policy definition list --query "[?name=='$PolicyName'].id" -o tsv)
 
-Write-Host "Policy ID: $policyID" -BackgroundColor green
+Write-Host "Policy ID: $policyID" -BackgroundColor Green
 
 az deployment group create `
     --name '00002-Deployment-5' `
@@ -72,8 +73,31 @@ az deployment group create `
                             pMessage='Adding default tags to this resource.' 
     
 #JLopez-20250819: Deploying the network interface and the virtual network.
-# az deployment group create `
-#     --name '00002-Deployment-5' `
-#     --parameters pAddressPrefix='11.0.0.0/16' pSubnetPrefix='11.0.0.0/24' `
-#     --resource-group $rg1 `
-#     --template-file '../infra/bicep/02.- network/vnet-1-subnet-1-nic.bicep' 
+$subnetID = $(
+                az deployment group create `
+                    --name '00002-Deployment-5' `
+                    --parameters pAddressPrefix='11.0.0.0/16' pSubnetPrefix='11.0.0.0/24' `
+                    --resource-group $rg1 `
+                    --template-file '../infra/bicep/02.- network/vnet-1-subnet-1.bicep' `
+                    --query properties.outputs.subnetID.value `
+                    -o tsv
+            )
+Write-Host "First subnet: $subnetID" -BackgroundColor Green
+
+$vmrg1 = "$vmGenericName-$rg1"
+
+Write-Host "First VM: $vmrg1" -BackgroundColor Green
+#JLopez-20250826: Deploying the NIC.
+$nicID = $(
+            az deployment group create `
+                --name '00002-Deployment-6' `
+                --resource-group $rg1 `
+                --template-file '../infra/bicep/02.- network/network-interface-nic.bicep' `
+                --parameters pVmName=$vmrg1 `
+                                pLocation='eastus' `
+                                    pSubnetId=$subnetID `
+                --query properties.outputs.nicID.value `
+                -o tsv
+)
+
+Write-Host "First VM - NIC: $nicID" -BackgroundColor Green

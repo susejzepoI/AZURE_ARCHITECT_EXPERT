@@ -5,6 +5,7 @@ param pComputerName string
 param pUserName string
 @secure()
 param pPassword string
+param pNicID string
 
 var pName = 'vm-${uniqueString(resourceGroup().id)}'
 
@@ -28,23 +29,15 @@ resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
         version: 'latest'
       }
       osDisk: {
-        name: 'name'
-        caching: 'ReadWrite'
         createOption: 'FromImage'
       }
     }
     networkProfile: {
       networkInterfaces: [
         {
-          id: 'id'
+          id: pNicID
         }
       ]
-    }
-    diagnosticsProfile: {
-      bootDiagnostics: {
-        enabled: true
-        storageUri:  'storageUri'
-      }
     }
   }
 }

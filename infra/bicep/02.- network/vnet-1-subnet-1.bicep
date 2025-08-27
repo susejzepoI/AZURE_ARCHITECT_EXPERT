@@ -6,11 +6,9 @@ param pSubnetPrefix   string = '10.0.0/24'
 /*JLopez-20250819: Local variables.*/
 var pVnetName       = 'vnet-${uniqueString(resourceGroup().id)}'
 var psubnetName     = 'subnet-${uniqueString(resourceGroup().id)}'
-var pNicName        = 'nic-${uniqueString(resourceGroup().id)}'
-var pIpConfigName   = 'ipconfig-${uniqueString(resourceGroup().id)}'
 
 /*JLopez-20250819: Creating the virtual network and the subnet.*/
-resource vnet 'Microsoft.Network/virtualNetworks@2024-07-01' = {
+resource myVnet 'Microsoft.Network/virtualNetworks@2024-07-01' = {
   name: pVnetName
   location: pLocation
   properties: {
@@ -30,22 +28,4 @@ resource vnet 'Microsoft.Network/virtualNetworks@2024-07-01' = {
   }
 }
 
-/*JLopez-20250819: Creating the network interface.*/
-resource nic 'Microsoft.Network/networkInterfaces@2024-07-01' = {
-  name: pNicName
-  location: pLocation
-  properties: {
-    ipConfigurations: [
-      {
-        name: pIpConfigName
-        properties: {
-          privateIPAllocationMethod: 'Dynamic'
-          subnet: {
-            id: vnet.properties.subnets[0].id
-          }
-        }
-      }
-    ]
-  }
-}
-
+output subnetID string = myVnet.properties.subnets[0].id
