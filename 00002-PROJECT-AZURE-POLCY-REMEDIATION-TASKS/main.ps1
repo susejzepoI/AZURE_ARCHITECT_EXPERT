@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     08-25-2025
+#Modified date:     08-28-2025
 
 [CmdletBinding()]
 param (
@@ -101,3 +101,16 @@ $nicID = $(
 )
 
 Write-Host "First VM - NIC: $nicID" -BackgroundColor Green
+
+$pass = Read-Host "Enter the password for all the virtual machines" -AsSecureString
+
+#JLopez-20250808: Deploying the virtual machine.
+az deployment group create `
+    --name '00002-Deployment-7' `
+    --resource-group $rg1 `
+    --template-file '../infra/bicep/03.- virtual machine/simple-vm-windows-2012-R2.bicep' `
+    --parameters pVmSize='Standard_A1_v2' `
+                    pUserName='azureuser' `
+                        pPassword=$pass`
+                            pNicId=$nicID `
+                                pLocation='eastus' 
