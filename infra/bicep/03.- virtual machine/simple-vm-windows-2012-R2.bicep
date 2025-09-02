@@ -14,6 +14,7 @@
   'Standard_D96d_v5'
 ])
 param pVmSize string = 'Standard_A1_v2'
+param pProject string
 
 @secure()
 param pUserName string
@@ -21,11 +22,17 @@ param pUserName string
 @secure()
 param pPassword string
 
-param pNicID string
+param pNicName string
 param pLocation string = resourceGroup().location
+param pVmName string
 
-var pName         = 'vm-${uniqueString(resourceGroup().id)}'
-var pComputerName = 'user-${uniqueString(resourceGroup().id)}'
+var pName         = '${pVmName}-${pProject}-${uniqueString(resourceGroup().id)}'
+var pComputerName = 'user-${pVmName}-${pProject}-${uniqueString(resourceGroup().id)}'
+
+/*JLopez-20250901: Getting the existing resource to be use in the bicep file.*/
+resource MyCreatedNic 'Microsoft.Network/networkInterfaces@2024-07-01' existing = {
+  name: pNicName
+}
 
 resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
   name: pName
@@ -53,7 +60,10 @@ resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: pNicID
+          id: MyCreatedNic.id
+          properties: {
+            primary: true
+          }
         }
       ]
     }
