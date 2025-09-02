@@ -54,7 +54,8 @@ az deployment sub create `
                         pCategory='Tags' `
                             pTagName='Project' `
                                 pTagValue='az305' `
-                                    pVersion=$policyVersion 
+                                    pVersion=$policyVersion `
+                                        pProject='00002'
 
 
 #JLopez-20250825: Assignin the policy definition.
@@ -70,15 +71,18 @@ az deployment group create `
                 pDefinitionID=$policyID `
                     pDisplayName="Enforce tags assignment to $rg1" `
                         pDescription="This policy enforce tags to all the resources in the resource group: $rg1" `
-                            pMessage='Adding default tags to this resource.' 
+                            pMessage='Adding default tags to this resource.' `
+                                pProject='00002' 
     
 #JLopez-20250819: Deploying the network interface and the virtual network.
 $subnetID = $(
                 az deployment group create `
                     --name '00002-vnet-subnet-Deployment-6' `
-                    --parameters pAddressPrefix='11.0.0.0/16' pSubnetPrefix='11.0.0.0/24' `
                     --resource-group $rg1 `
                     --template-file '../infra/bicep/02.- network/vnet-1-subnet-1.bicep' `
+                    --parameters pAddressPrefix='11.0.0.0/16' `
+                                    pSubnetPrefix='11.0.0.0/24' `
+                                        pProject='00002' `
                     --query properties.outputs.subnetID.value `
                     -o tsv
             )

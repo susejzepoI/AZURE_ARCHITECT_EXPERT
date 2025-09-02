@@ -13,21 +13,21 @@
   'Standard_D48d_v5'
   'Standard_D96d_v5'
 ])
-param pVmSize string = 'Standard_A1_v2'
-param pProject string
+param pVmSize     string = 'Standard_A1_v2'
+param pProject    string
 
 @secure()
-param pUserName string
+param pUserName   string
 
 @secure()
-param pPassword string
+param pPassword   string
 
-param pNicName string
-param pLocation string = resourceGroup().location
-param pVmName string
+param pNicName    string
+param pLocation   string = resourceGroup().location
+param pVmName     string
 
-var pName         = '${pVmName}-${pProject}-${uniqueString(resourceGroup().id)}'
-var pComputerName = 'user-${pVmName}-${pProject}-${uniqueString(resourceGroup().id)}'
+var pName           = '${pVmName}-${pProject}-${uniqueString(resourceGroup().id)}'
+var pComputerName   = 'user-${pVmName}-${pProject}-${uniqueString(resourceGroup().id)}'
 
 /*JLopez-20250901: Getting the existing resource to be use in the bicep file.*/
 resource MyCreatedNic 'Microsoft.Network/networkInterfaces@2024-07-01' existing = {

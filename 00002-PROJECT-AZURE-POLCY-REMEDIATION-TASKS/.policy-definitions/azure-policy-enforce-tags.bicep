@@ -5,6 +5,7 @@ param pName           string
 param pDisplayName    string
 param pCategory       string
 param pVersion        string = '1.0.0'
+param pProject        string
 
 @allowed(['Project','Environment','Product','Release'])
 param pTagName        string = 'Project'
@@ -13,21 +14,22 @@ param pTagName        string = 'Project'
 @maxLength(20)
 param pTagValue       string = 'az305'
 
-var pDescription = 'Policy to enforce ${pName}'
-var pTagFieldExpr = '''[concat('tags[', parameters('tagName'), ']')]'''
-var pTagValueExpr = '''[parameters('tagValue')]'''
-
+var description   = 'Policy to enforce ${pProject} ${pName}'
+var tagFieldExpr  = '''[concat('tags[', parameters('tagName'), ']')]'''
+var tagValueExpr  = '''[parameters('tagValue')]'''
+var displayName   = '${pProject}-${pDisplayName}'
+var name          = '${pProject}-${pName}'
 /*
   JLopez-20250822: Define the policy.
   Source: https://learn.microsoft.com/en-us/azure/templates/microsoft.authorization/2024-05-01/policydefinitions?pivots=deployment-language-bicep
 */
 resource policyForceTags 'Microsoft.Authorization/policyDefinitions@2020-03-01' = {
-  name: pName
+  name: name
   properties: {
-    displayName: pDisplayName
+    displayName: displayName
     policyType: 'Custom'
     mode: 'Indexed'
-    description: pDescription
+    description: description
     metadata: {
       version: pVersion
       category: pCategory
@@ -67,8 +69,8 @@ resource policyForceTags 'Microsoft.Authorization/policyDefinitions@2020-03-01' 
           operations: [
             {
               operation: 'addOrReplace'
-              field: pTagFieldExpr
-              value: pTagValueExpr
+              field: tagFieldExpr
+              value: tagValueExpr
             }
           ]
         }
