@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     09-01-2025
+#Modified date:     09-03-2025
 
 [CmdletBinding()]
 param (
@@ -12,14 +12,15 @@ param (
 
 )
 #JLopez-20250823: Defining the resource groups to be created.
+$Project                = '00002'
 $rg1                    = '00002-project-effect-modify-eforce-tags-1'
 $rg2                    = '00002-project-effect-deny-enforce-locations-1'
 $rg3                    = '00002-project-effect-deployifnotexists-public-ip-1'
 $PolicyDisplayName      = 'Eforce tags 1'
 $policyVersion          = '1.0.0'
-$PolicyName             = 'enforce-tags-rg1-1'
-$PolicyAssignmentName   = $PolicyName + '-assignment'
-$vmGenericName          = 'vm-'
+$PolicyName1            = "$Project-Enforce-tags"
+$PolicyAssignmentName1  = $PolicyName1 + '-assignment'
+$vmGenericName          = 'vm'
 
 #JLopez-20250508: Deploying the resource group at the subscription level, using a bicep template.
 az deployment sub create `
@@ -49,13 +50,13 @@ az deployment sub create `
     --location 'eastus' `
     --template-file './.policy-definitions/azure-policy-enforce-tags.bicep' `
     --subscription $pSubscriptionName `
-    --parameters pName=$PolicyName `
+    --parameters pName=$PolicyName1 `
                     pDisplayName=$PolicyDisplayName `
                         pCategory='Tags' `
                             pTagName='Project' `
                                 pTagValue='az305' `
                                     pVersion=$policyVersion `
-                                        pProject='00002'
+                                        pProject=$Project
 
 
 #JLopez-20250825: Assignin the policy definition.
@@ -65,14 +66,14 @@ Write-Host "Policy ID: $policyID" -BackgroundColor Green
 
 az deployment group create `
     --name '00002-policyAssg-Deployment-5' `
-    --template-file './.policy-assignments\azure-policy-assignments.bicep' `
+    --template-file './.policy-assignments/azure-policy-assignments.bicep' `
     --resource-group $rg1 `
-    --parameters pAssignmentName=$PolicyAssignmentName `
-                pDefinitionID=$policyID `
-                    pDisplayName="Enforce tags assignment to $rg1" `
-                        pDescription="This policy enforce tags to all the resources in the resource group: $rg1" `
-                            pMessage='Adding default tags to this resource.' `
-                                pProject='00002' 
+    --parameters pAssignmentName=$PolicyAssignmentName1 `
+                    pDefinitionID=$policyID `
+                        pDisplayName="Enforce tags assignment to $rg1" `
+                            pDescription="This policy enforce tags to all the resources in the resource group: $rg1" `
+                                pMessage='Adding default tags to this resource.' `
+                                    pProject=$Project
     
 #JLopez-20250819: Deploying the network interface and the virtual network.
 $subnetID = $(
@@ -82,7 +83,7 @@ $subnetID = $(
                     --template-file '../infra/bicep/02.- network/vnet-1-subnet-1.bicep' `
                     --parameters pAddressPrefix='11.0.0.0/16' `
                                     pSubnetPrefix='11.0.0.0/24' `
-                                        pProject='00002' `
+                                        pProject=$Project `
                     --query properties.outputs.subnetID.value `
                     -o tsv
             )
@@ -100,7 +101,7 @@ $nicName = $(
                 --parameters pVmName=$vmrg1 `
                                 pLocation='eastus' `
                                     pSubnetId=$subnetID `
-                                        pProject='00002' `
+                                        pProject=$Project `
                 --query properties.outputs.nicName.value `
                 -o tsv
 )
@@ -115,23 +116,54 @@ az deployment group create `
     --resource-group $rg1 `
     --template-file '../infra/bicep/03.- virtual machine/simple-vm-windows-2012-R2.bicep' `
     --parameters pVmSize='Standard_A1_v2' `
-                    pProject='00002' `
+                    pProject=$Project `
                         pUserName='azureuser' `
-                            pPassword=$pass`
+                            pPassword=$pass `
                                 pNicName=$nicName `
                                     pLocation='eastus' `
                                         pVmName=$vmrg1
 
 #JLopez-20250901: Deploying the linux virtual machine in the second resource group.
+$subnetID = $(
+                az deployment group create `
+                    --name '00002-vnet-subnet-Deployment-9' `
+                    --resource-group $rg2 `
+                    --template-file '../infra/bicep/02.- network/vnet-1-subnet-1.bicep' `
+                    --parameters pAddressPrefix='11.0.0.0/16' `
+                                    pSubnetPrefix='11.0.0.0/24' `
+                                        pProject=$Project `
+                    --query properties.outputs.subnetID.value `
+                    -o tsv
+            )
+Write-Host "Second subnet: $subnetID" -BackgroundColor Green
+
 $vmrg2 = "$vmGenericName-rg2"
+
+Write-Host "Second VM: $vmrg2" -BackgroundColor Green
+#JLopez-20250826: Deploying the NIC.
+$nicName = $(
+            az deployment group create `
+                --name '00002-nic-Deployment-9' `
+                --resource-group $rg2 `
+                --template-file '../infra/bicep/02.- network/network-interface-nic.bicep' `
+                --parameters pVmName=$vmrg2 `
+                                pLocation='westus' `
+                                    pSubnetId=$subnetID `
+                                        pProject=$Project `
+                --query properties.outputs.nicName.value `
+                -o tsv
+)
+
+Write-Host "Second VM - NIC: $nicName" -BackgroundColor Green
+
 az deployment group create `
     --name '00002-rg2-vm2-linux-Deployment-8' `
     --resource-group $rg2 `
     --template-file '../infra/bicep/03.- virtual machine/simple-vm-linux-ubuntu.bicep' `
-    --parameters pVmSize='Standard_A1_v2' 
-                    pProject='00002' `
+    --parameters pVmSize='Standard_A1_v2' `
+                    pProject=$Project `
                         pUserName='azureuser' `
-                            pPassword=$pass`
+                            pPassword=$pass `
                                 pNicName=$nicName `
-                                    pLocation='eastus'
+                                    pLocation='westus' `
                                         pVmName=$vmrg2

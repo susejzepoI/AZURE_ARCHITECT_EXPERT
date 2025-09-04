@@ -18,7 +18,7 @@ var description   = 'Policy to enforce ${pProject} ${pName}'
 var tagFieldExpr  = '''[concat('tags[', parameters('tagName'), ']')]'''
 var tagValueExpr  = '''[parameters('tagValue')]'''
 var displayName   = '${pProject}-${pDisplayName}'
-var name          = '${pProject}-${pName}'
+var name          = pName
 /*
   JLopez-20250822: Define the policy.
   Source: https://learn.microsoft.com/en-us/azure/templates/microsoft.authorization/2024-05-01/policydefinitions?pivots=deployment-language-bicep
