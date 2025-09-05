@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     09-03-2025
+#Modified date:     09-04-2025
 
 [CmdletBinding()]
 param (
@@ -13,12 +13,13 @@ param (
 )
 #JLopez-20250823: Defining the resource groups to be created.
 $Project                = '00002'
-$rg1                    = '00002-project-effect-modify-eforce-tags-1'
-$rg2                    = '00002-project-effect-deny-enforce-locations-1'
-$rg3                    = '00002-project-effect-deployifnotexists-public-ip-1'
-$PolicyDisplayName      = 'Eforce tags 1'
+$rg1                    = '00002-project-effect-modify-eforce-tags'
+$rg2                    = '00002-project-effect-deny-enforce-locations'
+$rg3                    = '00002-project-effect-deployifnotexists-public-ip'
+
 $policyVersion          = '1.0.0'
 $PolicyName1            = "$Project-Enforce-tags"
+$PolicyDisplayName1      = 'Eforce tags 1'
 $PolicyAssignmentName1  = $PolicyName1 + '-assignment'
 $vmGenericName          = 'vm'
 
@@ -51,7 +52,7 @@ az deployment sub create `
     --template-file './.policy-definitions/azure-policy-enforce-tags.bicep' `
     --subscription $pSubscriptionName `
     --parameters pName=$PolicyName1 `
-                    pDisplayName=$PolicyDisplayName `
+                    pDisplayName=$PolicyDisplayName1 `
                         pCategory='Tags' `
                             pTagName='Project' `
                                 pTagValue='az305' `
@@ -60,7 +61,7 @@ az deployment sub create `
 
 
 #JLopez-20250825: Assignin the policy definition.
-$policyID = $(az policy definition list --query "[?name=='$PolicyName'].id" -o tsv)
+$policyID = $(az policy definition list --query "[?name=='$PolicyName1'].id" -o tsv)
 
 Write-Host "Policy ID: $policyID" -BackgroundColor Green
 
