@@ -26,8 +26,8 @@ param pNicName    string
 param pLocation   string = resourceGroup().location
 param pVmName     string
 
-var pName           = '${pVmName}-${pProject}-${uniqueString(resourceGroup().id)}'
-var pComputerName   = 'user-${pVmName}-${pProject}-${uniqueString(resourceGroup().id)}'
+var pName           = '${pVmName}-${pProject}'
+var pComputerName   = 'user-${pVmName}-${pProject}'
 
 /*JLopez-20250901: Getting the existing resource to be use in the bicep file.*/
 resource MyCreatedNic 'Microsoft.Network/networkInterfaces@2024-07-01' existing = {
@@ -47,10 +47,17 @@ resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
       adminPassword: pPassword
     }
     storageProfile: {
+      /*
+        JLopez-20250905: Use the following query to find the correct image.
+        1) $locName = "eastus"
+        2) Get-AzVMImagePublisher -Location $locName | where-object {$_.PublisherName -like "Microsoft*Server*"} | Select-Object publisherName
+        3) Get-AzVMImageOffer -Location $locName -PublisherName "MicrosoftWindowsServer"  | Select Offer
+        4) Get-AzVMImageSku -Location $locName -PublisherName "MicrosoftWindowsServer" -Offer "windowsserver2022" | Select Skus
+      */
       imageReference: {
         publisher: 'MicrosoftWindowsServer'
         offer: 'WindowsServer'
-        sku: '2012-R2-Datacenter'
+        sku: '2022-datacenter-smalldisk'
         version: 'latest'
       }
       osDisk: {

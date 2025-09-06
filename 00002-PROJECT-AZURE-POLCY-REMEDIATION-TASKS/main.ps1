@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     09-04-2025
+#Modified date:     09-05-2025
 
 [CmdletBinding()]
 param (
@@ -19,7 +19,7 @@ $rg3                    = '00002-project-effect-deployifnotexists-public-ip'
 
 $policyVersion          = '1.0.0'
 $PolicyName1            = "$Project-Enforce-tags"
-$PolicyDisplayName1      = 'Eforce tags 1'
+$PolicyDisplayName1     = 'Eforce tags 1'
 $PolicyAssignmentName1  = $PolicyName1 + '-assignment'
 $vmGenericName          = 'vm'
 
@@ -115,7 +115,7 @@ $pass = Read-Host "Enter the password for all the virtual machines" -AsSecureStr
 az deployment group create `
     --name '00002-rg1-vm1-win-Deployment-8' `
     --resource-group $rg1 `
-    --template-file '../infra/bicep/03.- virtual machine/simple-vm-windows-2012-R2.bicep' `
+    --template-file '../infra/bicep/03.- virtual machine/simple-vm-windows-2022-smalldisk.bicep' `
     --parameters pVmSize='Standard_A1_v2' `
                     pProject=$Project `
                         pUserName='azureuser' `
