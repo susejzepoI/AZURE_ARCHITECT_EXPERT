@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     09-05-2025
+#Modified date:     09-08-2025
 
 [CmdletBinding()]
 param (
@@ -47,34 +47,36 @@ az deployment sub create `
 
 #JLopez-20250823: Deploying the azure policy definition.
 az deployment sub create `
-    --name '00002-policy1def-Deployment-4' `
+    --name '00002-policy1-Deployment-4' `
     --location 'eastus' `
-    --template-file './.policy-definitions/azure-policy-enforce-tags.bicep' `
+    --template-file './.policies/azure-policy-enforce-tags.bicep' `
     --subscription $pSubscriptionName `
     --parameters pName=$PolicyName1 `
                     pDisplayName=$PolicyDisplayName1 `
                         pCategory='Tags' `
-                            pTagName='Project' `
-                                pTagValue='az305' `
-                                    pVersion=$policyVersion `
-                                        pProject=$Project
+                            pVersion=$policyVersion `
+                                pProject=$Project `
+                                    pLocation='eastus' `
+                                        pResourceGroupName=$rg1 `
+                                            pTagName='Project' `
+                                                pTagValue='az305'
 
+# JLopez-20250908: I commented out this section because I merged the policy definition and the assignment in the same Bicep file.
+# #JLopez-20250825: Assignin the policy definition.
+# $policyID = $(az policy definition list --query "[?name=='$PolicyName1'].id" -o tsv)
 
-#JLopez-20250825: Assignin the policy definition.
-$policyID = $(az policy definition list --query "[?name=='$PolicyName1'].id" -o tsv)
+# Write-Host "Policy ID: $policyID" -BackgroundColor Green
 
-Write-Host "Policy ID: $policyID" -BackgroundColor Green
-
-az deployment group create `
-    --name '00002-policyAssg-Deployment-5' `
-    --template-file './.policy-assignments/azure-policy-assignments.bicep' `
-    --resource-group $rg1 `
-    --parameters pAssignmentName=$PolicyAssignmentName1 `
-                    pDefinitionID=$policyID `
-                        pDisplayName="Enforce tags assignment to $rg1" `
-                            pDescription="This policy enforce tags to all the resources in the resource group: $rg1" `
-                                pMessage='Adding default tags to this resource.' `
-                                    pProject=$Project
+# az deployment group create `
+#     --name '00002-policyAssg-Deployment-5' `
+#     --template-file './.policy-assignments/azure-policy-assignments.bicep' `
+#     --resource-group $rg1 `
+#     --parameters pAssignmentName=$PolicyAssignmentName1 `
+#                     pDefinitionID=$policyID `
+#                         pDisplayName="Enforce tags assignment to $rg1" `
+#                             pDescription="This policy enforce tags to all the resources in the resource group: $rg1" `
+#                                 pMessage='Adding default tags to this resource.' `
+#                                     pProject=$Project
     
 #JLopez-20250819: Deploying the network interface and the virtual network.
 $subnetID = $(

@@ -27,7 +27,7 @@ param pLocation   string = resourceGroup().location
 param pVmName     string
 
 var pName           = '${pVmName}-${pProject}'
-var pComputerName   = 'user-${pVmName}-${pProject}'
+var pComputerName   = '${pVmName}-${pProject}'
 
 /*JLopez-20250901: Getting the existing resource to be use in the bicep file.*/
 resource MyCreatedNic 'Microsoft.Network/networkInterfaces@2024-07-01' existing = {
