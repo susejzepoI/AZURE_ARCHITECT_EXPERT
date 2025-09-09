@@ -7,7 +7,6 @@ param pCategory             string
 param pVersion              string = '1.0.0'
 param pProject              string
 param pLocation             string
-param pResourceGroupName    string 
 
 @allowed(['Project','Environment','Product','Release'])
 param pTagName        string = 'Project'
@@ -21,7 +20,7 @@ var tagFieldExpr    = '''[concat('tags[', parameters('tagName'), ']')]'''
 var tagValueExpr    = '''[parameters('tagValue')]'''
 var displayName     = '${pProject}-${pDisplayName}'
 var name            = pName
-var AssignmentName = '$Assignment-{pProject}-${pName}'
+var AssignmentName  = 'Assignment-${pProject}-${pName}'
 /*
   JLopez-20250822: Define the policy.
   Source: https://learn.microsoft.com/en-us/azure/templates/microsoft.authorization/2024-05-01/policydefinitions?pivots=deployment-language-bicep
@@ -82,10 +81,10 @@ resource policyDefinitionEnforceTags 'Microsoft.Authorization/policyDefinitions@
   }
 }
 
-/*JLopez-20250908: Getting the resource group definition.*/
-resource myRG 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
-  name: pResourceGroupName
-}
+// /*JLopez-20250908: Getting the resource group definition.*/
+// resource myRG 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
+//   name: pResourceGroupName
+// }
 
 /*
 JLopez-20250823: Assign the policy definition to a scope.
@@ -101,7 +100,6 @@ resource policyAssignment 'Microsoft.Authorization/policyAssignments@2024-05-01'
     displayName: displayName
     description: description
     policyDefinitionId: policyDefinitionEnforceTags.id
-    scope: myRG.id
     nonComplianceMessages: [
       {
         message: description

@@ -13,14 +13,15 @@ param (
 )
 #JLopez-20250823: Defining the resource groups to be created.
 $Project                = '00002'
-$rg1                    = '00002-project-effect-modify-eforce-tags'
-$rg2                    = '00002-project-effect-deny-enforce-locations'
-$rg3                    = '00002-project-effect-deployifnotexists-public-ip'
+$rg1                    = '00002-eforce-tags'
+$rg2                    = '00002-deny-locations'
+$rg3                    = '00002-deployifnotexists-public-ip'
 
 $policyVersion          = '1.0.0'
 $PolicyName1            = "$Project-Enforce-tags"
-$PolicyDisplayName1     = 'Eforce tags 1'
-$PolicyAssignmentName1  = $PolicyName1 + '-assignment'
+$PolicyDisplayName1     = 'Eforce tags'
+$PolicyName2            = "$Project-Deny-location"
+$PolicyDisplayName2     = 'Deny deployments in specific locations'
 $vmGenericName          = 'vm'
 
 #JLopez-20250508: Deploying the resource group at the subscription level, using a bicep template.
@@ -47,7 +48,7 @@ az deployment sub create `
 
 #JLopez-20250823: Deploying the azure policy definition.
 az deployment sub create `
-    --name '00002-policy1-Deployment-4' `
+    --name '00002-policy1-Deployment-4-1' `
     --location 'eastus' `
     --template-file './.policies/azure-policy-enforce-tags.bicep' `
     --subscription $pSubscriptionName `
@@ -57,9 +58,19 @@ az deployment sub create `
                             pVersion=$policyVersion `
                                 pProject=$Project `
                                     pLocation='eastus' `
-                                        pResourceGroupName=$rg1 `
-                                            pTagName='Project' `
-                                                pTagValue='az305'
+                                        pTagName='Project' `
+                                            pTagValue='az305'
+
+az deployment sub create `
+    --name '00002-policy2-Deployment-4-2' `
+    --location 'westus' `
+    --template-file './.policies/azure-policy-deny-location.bicep' `
+    --subscription $pSubscriptionName `
+    --parameters pName=$PolicyName2 `
+                    pLocation='westus' `
+                        pDisplayName=$PolicyDisplayName2 `
+                            pCategory='Deny' `
+                                pProject=$Project
 
 # JLopez-20250908: I commented out this section because I merged the policy definition and the assignment in the same Bicep file.
 # #JLopez-20250825: Assignin the policy definition.
