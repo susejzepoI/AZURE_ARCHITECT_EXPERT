@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     09-08-2025
+#Modified date:     09-09-2025
 
 [CmdletBinding()]
 param (
@@ -15,7 +15,7 @@ param (
 $Project                = '00002'
 $rg1                    = '00002-eforce-tags'
 $rg2                    = '00002-deny-locations'
-$rg3                    = '00002-deployifnotexists-public-ip'
+$rg3                    = '00002-deployifnotexists-nsg'
 
 $policyVersion          = '1.0.0'
 $PolicyName1            = "$Project-Enforce-tags"
@@ -59,7 +59,8 @@ az deployment sub create `
                                 pProject=$Project `
                                     pLocation='eastus' `
                                         pTagName='Project' `
-                                            pTagValue='az305'
+                                            pTagValue='az305' `
+                                                pRGName=$rg1
 
 az deployment sub create `
     --name '00002-policy2-Deployment-4-2' `
@@ -70,7 +71,8 @@ az deployment sub create `
                     pLocation='westus' `
                         pDisplayName=$PolicyDisplayName2 `
                             pCategory='Deny' `
-                                pProject=$Project
+                                pProject=$Project `
+                                    pRGName=$rg2
 
 # JLopez-20250908: I commented out this section because I merged the policy definition and the assignment in the same Bicep file.
 # #JLopez-20250825: Assignin the policy definition.

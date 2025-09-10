@@ -7,6 +7,7 @@ param pCategory             string
 param pVersion              string = '1.0.0'
 param pProject              string
 param pLocation             string
+param pRGName               string
 
 @allowed(['Project','Environment','Product','Release'])
 param pTagName        string = 'Project'
@@ -21,10 +22,15 @@ var tagValueExpr    = '''[parameters('tagValue')]'''
 var displayName     = '${pProject}-${pDisplayName}'
 var name            = pName
 var AssignmentName  = 'Assignment-${pProject}-${pName}'
+
 /*
-  JLopez-20250822: Define the policy.
-  Source: https://learn.microsoft.com/en-us/azure/templates/microsoft.authorization/2024-05-01/policydefinitions?pivots=deployment-language-bicep
+  JLopez-20250909: Policy templates.
+  Source: https://github.com/Azure/azure-policy/tree/master/samples/built-in-policy
 */
+resource myRG 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
+  name: pRGName
+}
+
 resource policyDefinitionEnforceTags 'Microsoft.Authorization/policyDefinitions@2020-03-01' = {
   name: name
   properties: {
@@ -89,6 +95,7 @@ resource policyDefinitionEnforceTags 'Microsoft.Authorization/policyDefinitions@
 /*
 JLopez-20250823: Assign the policy definition to a scope.
 source: https://learn.microsoft.com/en-us/azure/governance/policy/assign-policy-bicep?tabs=azure-powershell
+source: https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/scope-extension-resources
 */
 resource policyAssignment 'Microsoft.Authorization/policyAssignments@2024-05-01' = {
   name: AssignmentName
@@ -97,6 +104,7 @@ resource policyAssignment 'Microsoft.Authorization/policyAssignments@2024-05-01'
     type: 'SystemAssigned'
   }
   properties: {
+    scope: myRG.id
     displayName: displayName
     description: description
     policyDefinitionId: policyDefinitionEnforceTags.id
