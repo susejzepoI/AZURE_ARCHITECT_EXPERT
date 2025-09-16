@@ -25,7 +25,7 @@ var AssignmentName  = 'Assignment-${pProject}-${pName}'
 
 /*
   JLopez-20250909: Policy templates.
-  Source: https://github.com/Azure/azure-policy/tree/master/samples/built-in-policy
+  Source: https://github.com/Azure/azure-policy/tree/master/built-in-policies
 */
 resource myRG 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
   name: pRGName
@@ -86,11 +86,6 @@ resource policyDefinitionEnforceTags 'Microsoft.Authorization/policyDefinitions@
     }
   }
 }
-
-// /*JLopez-20250908: Getting the resource group definition.*/
-// resource myRG 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
-//   name: pResourceGroupName
-// }
 
 /*
 JLopez-20250823: Assign the policy definition to a scope.

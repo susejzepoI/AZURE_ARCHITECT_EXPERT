@@ -17,7 +17,7 @@ var AssignmentName  = 'Assignment-${pProject}-${pName}'
 
 /*
   JLopez-20250909: Policy templates.
-  Source: https://github.com/Azure/azure-policy/tree/master/samples/built-in-policy
+  Source: https://github.com/Azure/azure-policy/tree/master/built-in-policies
 */
 resource myRG 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
   name: pRGName
@@ -54,11 +54,6 @@ resource policyDenyLocation 'Microsoft.Authorization/policyDefinitions@2020-03-0
     }
   }
 }
-
-// /*JLopez-20250908: Getting the resource group definition.*/
-// resource myRG 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
-//   name: pResourceGroupName
-// }
 
 resource policyAssignmentDenyLocation 'Microsoft.Authorization/policyAssignments@2020-03-01' = {
   name: AssignmentName
