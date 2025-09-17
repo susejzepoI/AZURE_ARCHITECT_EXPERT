@@ -42,7 +42,11 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
           }
           {
             count: {
-              field: 'Microsoft.Network/networkSecurityGroups'
+              field: 'Microsoft.Network/networkSecurityGroups[*].name'
+              where: {
+                field: 'name'
+                equals: pNsgName
+              }
             }
             equals: 0
           }

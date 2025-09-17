@@ -60,8 +60,7 @@ az deployment sub create `
                                 pProject=$Project `
                                     pLocation='eastus' `
                                         pTagName='Project' `
-                                            pTagValue='az305' `
-                                                pRGName=$rg1
+                                            pTagValue='az305'
 
 az deployment sub create `
     --name '00002-policy2-Deployment-4-2' `

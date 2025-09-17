@@ -7,7 +7,6 @@ param pCategory             string
 param pVersion              string = '1.0.0'
 param pProject              string
 param pLocation             string
-param pRGName               string
 
 @allowed(['Project','Environment','Product','Release'])
 param pTagName        string = 'Project'
@@ -22,14 +21,6 @@ var tagValueExpr    = '''[parameters('tagValue')]'''
 var displayName     = '${pProject}-${pDisplayName}'
 var name            = pName
 var AssignmentName  = 'Assignment-${pProject}-${pName}'
-
-/*
-  JLopez-20250909: Policy templates.
-  Source: https://github.com/Azure/azure-policy/tree/master/built-in-policies
-*/
-resource myRG 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
-  name: pRGName
-}
 
 resource policyDefinitionEnforceTags 'Microsoft.Authorization/policyDefinitions@2020-03-01' = {
   name: name
@@ -99,7 +90,6 @@ resource policyAssignment 'Microsoft.Authorization/policyAssignments@2024-05-01'
     type: 'SystemAssigned'
   }
   properties: {
-    scope: myRG.id
     displayName: displayName
     description: description
     policyDefinitionId: policyDefinitionEnforceTags.id
