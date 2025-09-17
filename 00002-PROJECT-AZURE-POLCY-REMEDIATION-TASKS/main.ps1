@@ -1,14 +1,12 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     09-15-2025
+#Modified date:     09-16-2025
 
 [CmdletBinding()]
 param (
     [Parameter()]
-    [string]$pSubscriptionName      = 'Suscripción de Plataformas de MSDN',
-    [Parameter()]
-    [string]$pManagementGroupName   = 'DEV'
+    [string]$pSubscriptionName      = 'Suscripción de Plataformas de MSDN'
 
 )
 #JLopez-20250823: Defining the resource groups to be created.
@@ -22,6 +20,9 @@ $PolicyName1            = "$Project-Enforce-tags"
 $PolicyDisplayName1     = 'Eforce tags'
 $PolicyName2            = "$Project-Deny-location"
 $PolicyDisplayName2     = 'Deny deployments in specific locations'
+$PolicyName3            = "$Project-Deploy-nsg-if-not-exists"
+$PolicyDisplayName3     = 'Deploy NSG if not exists'
+$NsgName                = "$Project-nsg"
 $vmGenericName          = 'vm'
 
 #JLopez-20250508: Deploying the resource group at the subscription level, using a bicep template.
@@ -74,6 +75,17 @@ az deployment sub create `
                                 pProject=$Project `
                                     pRGName=$rg2
 
+az deployment sub create `
+    --name '00002-policy2-Deployment-4-3' `
+    --location 'eastus' `
+    --template-file './.policies/azure-policy-deployifnotexists.bicep' `
+    --subscription $pSubscriptionName `
+    --parameters pName=$PolicyName3 `
+                    pDisplayName=$PolicyDisplayName3 `
+                        pCategory='Network' `
+                            pProject=$Project `
+                                pRGName=$rg3 `
+                                    pNsgName=$NsgName
 # JLopez-20250908: I commented out this section because I merged the policy definition and the assignment in the same Bicep file.
 # #JLopez-20250825: Assignin the policy definition.
 # $policyID = $(az policy definition list --query "[?name=='$PolicyName1'].id" -o tsv)

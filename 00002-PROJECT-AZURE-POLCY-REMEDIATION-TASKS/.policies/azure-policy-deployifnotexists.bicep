@@ -6,6 +6,7 @@ param pCategory             string
 param pVersion              string = '1.0.0'
 param pProject              string
 param pRGName               string
+param pNsgName              string
 
 var displayName     = pDisplayName
 var description     = 'Deploy a network segurity group in the ${pRGName} if not exists.'
@@ -13,6 +14,7 @@ var AssignmentName  = 'Assignment-${pProject}-${pName}'
 
 /*
   JLopez-20250909: Policy templates.
+  source: https://learn.microsoft.com/en-us/azure/governance/policy/concepts/effect-deploy-if-not-exists#deployifnotexists-properties
   Source: https://github.com/Azure/azure-policy/tree/master/built-in-policies
   source: https://learn.microsoft.com/en-us/azure/governance/policy/concepts/effect-deploy-if-not-exists#deployifnotexists-example
 */
@@ -25,7 +27,7 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
   properties: {
     displayName: displayName
     policyType: 'Custom'
-    mode: 'All'
+    mode: 'Indexed'
     description: description
     metadata: {
       version: pVersion
@@ -33,8 +35,18 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
     }
     policyRule:{
       if: {
-        field: 'type'
-        equals: 'Microsoft.Network/networkSecurityGroups'
+        allof: [
+          {
+            field: 'type'
+            equals: 'Microsoft.Resources/resourceGroups'
+          }
+          {
+            count: {
+              field: 'Microsoft.Network/networkSecurityGroups'
+            }
+            equals: 0
+          }
+        ]
       }
       then: {
         effect: 'deployIfNotExists'
@@ -49,9 +61,21 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
               template: {
                 schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#'
                 contentVersion: '1.0.0.0'
+                resources: [
+                  {
+                    type: 'Microsoft.Network/networkSecurityGroups'
+                    apiVersion: '2023-05-01'
+                    name: pNsgName
+                    location: myRG.location
+                  }
+                ]
+              }
+            }
+          }
+        }
       }
     }
-   }
+  }
 }
 
 resource policyAssignmentDeployIfNotExists 'Microsoft.Authorization/policyAssignments@2020-03-01' = {
