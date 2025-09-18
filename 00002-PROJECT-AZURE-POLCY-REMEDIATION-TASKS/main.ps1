@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     09-16-2025
+#Modified date:     09-17-2025
 
 [CmdletBinding()]
 param (
@@ -70,9 +70,17 @@ az deployment sub create `
     --parameters pName=$PolicyName2 `
                     pLocation='westus' `
                         pDisplayName=$PolicyDisplayName2 `
-                            pCategory='Deny' `
-                                pProject=$Project `
-                                    pRGName=$rg2
+                            pCategory='Deny'
+
+# #JLopez-20250917: Assignin the policy definition.
+az deployment group create `
+    --name '00002-policy2-Assigment-4-2-1' `
+    --template-file './.policies/azure-policy-deny-location-assigment.bicep' `
+    --resource-group $rg2 `
+    --parameters pName=$PolicyName2 `
+                    pLocation='westus' `
+                        pDisplayName=$PolicyDisplayName2 `
+                            pProject=$Project
 
 az deployment sub create `
     --name '00002-policy2-Deployment-4-3' `
@@ -85,22 +93,6 @@ az deployment sub create `
                             pProject=$Project `
                                 pRGName=$rg3 `
                                     pNsgName=$NsgName
-# JLopez-20250908: I commented out this section because I merged the policy definition and the assignment in the same Bicep file.
-# #JLopez-20250825: Assignin the policy definition.
-# $policyID = $(az policy definition list --query "[?name=='$PolicyName1'].id" -o tsv)
-
-# Write-Host "Policy ID: $policyID" -BackgroundColor Green
-
-# az deployment group create `
-#     --name '00002-policyAssg-Deployment-5' `
-#     --template-file './.policy-assignments/azure-policy-assignments.bicep' `
-#     --resource-group $rg1 `
-#     --parameters pAssignmentName=$PolicyAssignmentName1 `
-#                     pDefinitionID=$policyID `
-#                         pDisplayName="Enforce tags assignment to $rg1" `
-#                             pDescription="This policy enforce tags to all the resources in the resource group: $rg1" `
-#                                 pMessage='Adding default tags to this resource.' `
-#                                     pProject=$Project
     
 #JLopez-20250819: Deploying the network interface and the virtual network.
 $subnetID = $(
