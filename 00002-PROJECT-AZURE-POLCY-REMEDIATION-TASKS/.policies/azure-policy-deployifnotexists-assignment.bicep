@@ -20,6 +20,7 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
 resource policyAssignmentDeployIfNotExists 'Microsoft.Authorization/policyAssignments@2020-03-01' = {
   name: AssignmentName
   scope: resourceGroup()
+  location: resourceGroup().location
   properties: {
     displayName: AssignmentName
     policyDefinitionId: policyDefinitionDeployIfNotExists.id
