@@ -6,9 +6,10 @@ param pLocation             string
 param pDisplayName          string
 param pCategory             string
 param pVersion              string = '1.0.0'
+param pProject              string
 
 var description     = 'Policy to deny deployments on: ${pLocation}.'
-var displayName     = pDisplayName
+var displayName     = '${pProject}-${pDisplayName}'
 var name            = pName
 var tagExpr         = '''[parameters('allowedLocations')]'''
 
@@ -17,7 +18,7 @@ resource policyDenyLocation 'Microsoft.Authorization/policyDefinitions@2020-03-0
   properties: {
     displayName: displayName
     policyType: 'Custom'
-    mode: 'All'
+    mode: 'Indexed'
     description: 'This policy denies the creation of resources in locations that are not explicitly allowed.'
     metadata: {
       version: pVersion

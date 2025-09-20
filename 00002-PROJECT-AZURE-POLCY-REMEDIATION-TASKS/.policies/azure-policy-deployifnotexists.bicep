@@ -4,13 +4,12 @@ param pName                 string
 param pDisplayName          string
 param pCategory             string
 param pVersion              string = '1.0.0'
-param pProject              string
 param pRGName               string
 param pNsgName              string
+param pProject              string
 
-var displayName     = pDisplayName
+var displayName     = '${pProject}-${pDisplayName}'
 var description     = 'Deploy a network segurity group in the ${pRGName} if not exists.'
-var AssignmentName  = 'Assignment-${pProject}-${pName}'
 
 /*
   JLopez-20250909: Policy templates.
@@ -42,9 +41,9 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
           }
           {
             count: {
-              field: 'Microsoft.Network/networkSecurityGroups/stringArray[*]'
+              field: 'Microsoft.Network/networkSecurityGroups/securityRules[*]'
               where: {
-                field: 'name'
+                field: 'Microsoft.Network/networkSecurityGroups/SecurityRules[*].name'
                 equals: pNsgName
               }
             }
@@ -79,15 +78,5 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
         }
       }
     }
-  }
-}
-
-resource policyAssignmentDeployIfNotExists 'Microsoft.Authorization/policyAssignments@2020-03-01' = {
-  name: AssignmentName
-  properties: {
-    displayName: AssignmentName
-    policyDefinitionId: policyDefinitionDeployIfNotExists.id
-    scope: myRG.id
-    enforcementMode: 'Default'
   }
 }

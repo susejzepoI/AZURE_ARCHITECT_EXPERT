@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     09-17-2025
+#Modified date:     09-19-2025
 
 [CmdletBinding()]
 param (
@@ -70,12 +70,13 @@ az deployment sub create `
     --parameters pName=$PolicyName2 `
                     pLocation='westus' `
                         pDisplayName=$PolicyDisplayName2 `
-                            pCategory='Deny'
+                            pCategory='Deny' `
+                                pProject=$Project `
 
 # #JLopez-20250917: Assignin the policy definition.
 az deployment group create `
     --name '00002-policy2-Assigment-4-2-1' `
-    --template-file './.policies/azure-policy-deny-location-assigment.bicep' `
+    --template-file './.policies/azure-policy-deny-location-assignment.bicep' `
     --resource-group $rg2 `
     --parameters pName=$PolicyName2 `
                     pLocation='westus' `
@@ -83,17 +84,25 @@ az deployment group create `
                             pProject=$Project
 
 az deployment sub create `
-    --name '00002-policy2-Deployment-4-3' `
+    --name '00002-policy3-Deployment-4-3' `
     --location 'eastus' `
     --template-file './.policies/azure-policy-deployifnotexists.bicep' `
     --subscription $pSubscriptionName `
     --parameters pName=$PolicyName3 `
                     pDisplayName=$PolicyDisplayName3 `
                         pCategory='Network' `
-                            pProject=$Project `
                                 pRGName=$rg3 `
-                                    pNsgName=$NsgName
-    
+                                    pNsgName=$NsgName `
+                                        pProject=$Project
+
+# #JLopez-20250919: Assignin the policy definition.
+az deployment group create `
+    --name '00002-policy3-Assigment-4-3-1' `
+    --template-file './.policies/azure-policy-deployifnotexists-assignment.bicep' `
+    --resource-group $rg3 `
+    --parameters pName=$PolicyName3 `
+                    pProject=$Project
+
 #JLopez-20250819: Deploying the network interface and the virtual network.
 $subnetID = $(
                 az deployment group create `

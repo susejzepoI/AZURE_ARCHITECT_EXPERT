@@ -6,8 +6,7 @@ param pLocation             string
 param pDisplayName          string
 param pProject              string
 
-var displayName     = pDisplayName
-var AssignmentName  = 'Assignment-${pProject}-${pName}'
+var AssignmentName  = '${pProject}-Assignment-${pName}'
 
 /*
   JLopez-20250909: Policy templates.
@@ -22,7 +21,7 @@ resource policyAssignmentDenyLocation 'Microsoft.Authorization/policyAssignments
   name: AssignmentName
   scope: resourceGroup()
   properties: {
-    displayName: displayName
+    displayName: pDisplayName
     policyDefinitionId: policyDefinitionDenyLocation.id
     parameters: {
       allowedLocations: {
