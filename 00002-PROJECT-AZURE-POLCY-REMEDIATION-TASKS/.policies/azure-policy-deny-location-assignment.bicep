@@ -3,10 +3,8 @@ targetScope = 'resourceGroup'
 param pName                 string
 @allowed(['westus','Brazil'])
 param pLocation             string
-param pDisplayName          string
-param pProject              string
 
-var AssignmentName  = '${pProject}-Assignment-${pName}'
+var AssignmentName  = 'Assignment-${pName}'
 
 /*
   JLopez-20250909: Policy templates.
@@ -21,7 +19,7 @@ resource policyAssignmentDenyLocation 'Microsoft.Authorization/policyAssignments
   name: AssignmentName
   scope: resourceGroup()
   properties: {
-    displayName: pDisplayName
+    displayName: AssignmentName
     policyDefinitionId: policyDefinitionDenyLocation.id
     parameters: {
       allowedLocations: {

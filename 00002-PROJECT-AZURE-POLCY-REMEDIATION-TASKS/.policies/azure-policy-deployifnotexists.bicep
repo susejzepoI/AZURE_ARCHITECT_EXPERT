@@ -1,14 +1,12 @@
 targetScope = 'subscription'
 
 param pName                 string
-param pDisplayName          string
 param pCategory             string
 param pVersion              string = '1.0.0'
 param pRGName               string
 param pNsgName              string
-param pProject              string
 
-var displayName     = '${pProject}-${pDisplayName}'
+var displayName     = pName
 var description     = 'Deploy a network segurity group in the ${pRGName} if not exists.'
 
 /*

@@ -2,10 +2,8 @@
 targetScope = 'subscription'
 
 param pName                 string
-param pDisplayName          string
 param pCategory             string
 param pVersion              string = '1.0.0'
-param pProject              string
 param pLocation             string
 
 @allowed(['Project','Environment','Product','Release'])
@@ -15,12 +13,12 @@ param pTagName        string = 'Project'
 @maxLength(20)
 param pTagValue       string = 'az305'
 
-var description     = 'Policy to enforce ${pProject} ${pName}'
+var description     = 'Policy to enforce ${pName}'
 var tagFieldExpr    = '''[concat('tags[', parameters('tagName'), ']')]'''
 var tagValueExpr    = '''[parameters('tagValue')]'''
-var displayName     = '${pProject}-${pDisplayName}'
+var displayName     = pName
 var name            = pName
-var AssignmentName  = 'Assignment-${pProject}-${pName}'
+var AssignmentName  = 'Assignment-${pName}'
 
 resource policyDefinitionEnforceTags 'Microsoft.Authorization/policyDefinitions@2020-03-01' = {
   name: name
@@ -97,7 +95,7 @@ resource policyAssignment 'Microsoft.Authorization/policyAssignments@2024-05-01'
     type: 'SystemAssigned'
   }
   properties: {
-    displayName: displayName
+    displayName: AssignmentName
     description: description
     policyDefinitionId: policyDefinitionEnforceTags.id
     nonComplianceMessages: [

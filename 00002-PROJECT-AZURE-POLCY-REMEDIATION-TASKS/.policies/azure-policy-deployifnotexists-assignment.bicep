@@ -1,10 +1,8 @@
 targetScope = 'resourceGroup'
 
 param pName                 string
-param pProject              string
 
-var AssignmentName  = '${pProject}-Assignment-${pName}'
-
+var AssignmentName  = 'Assignment-${pName}'
 
 resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefinitions@2020-03-01' existing = {
   name: pName

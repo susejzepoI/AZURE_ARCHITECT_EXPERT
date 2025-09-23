@@ -11,17 +11,14 @@ param (
 )
 #JLopez-20250823: Defining the resource groups to be created.
 $Project                = '00002'
-$rg1                    = '00002-eforce-tags'
-$rg2                    = '00002-deny-locations'
-$rg3                    = '00002-deployifnotexists-nsg'
+$rg1                    = "$Project-eforce-tags"
+$rg2                    = "$Project-deny-locations"
+$rg3                    = "$Project-deployifnotexists-nsg"
 
 $policyVersion          = '1.0.0'
 $PolicyName1            = "$Project-Enforce-tags"
-$PolicyDisplayName1     = 'Eforce tags'
 $PolicyName2            = "$Project-Deny-location"
-$PolicyDisplayName2     = 'Deny deployments in specific locations'
 $PolicyName3            = "$Project-Deploy-nsg-if-not-exists"
-$PolicyDisplayName3     = 'Deploy NSG if not exists'
 $NsgName                = "$Project-nsg"
 $vmGenericName          = 'vm'
 
@@ -54,13 +51,11 @@ az deployment sub create `
     --template-file './.policies/azure-policy-enforce-tags.bicep' `
     --subscription $pSubscriptionName `
     --parameters pName=$PolicyName1 `
-                    pDisplayName=$PolicyDisplayName1 `
-                        pCategory='Tags' `
-                            pVersion=$policyVersion `
-                                pProject=$Project `
-                                    pLocation='eastus' `
-                                        pTagName='Project' `
-                                            pTagValue='az305'
+                    pCategory='Tags' `
+                        pVersion=$policyVersion `
+                            pLocation='eastus' `
+                                pTagName='Project' `
+                                    pTagValue='az305'
 
 az deployment sub create `
     --name '00002-policy2-Deployment-4-2' `
@@ -69,9 +64,8 @@ az deployment sub create `
     --subscription $pSubscriptionName `
     --parameters pName=$PolicyName2 `
                     pLocation='westus' `
-                        pDisplayName=$PolicyDisplayName2 `
-                            pCategory='Deny' `
-                                pProject=$Project `
+                        pCategory='Deny' `
+                            pVersion=$policyVersion
 
 # #JLopez-20250917: Assignin the policy definition.
 az deployment group create `
@@ -79,9 +73,7 @@ az deployment group create `
     --template-file './.policies/azure-policy-deny-location-assignment.bicep' `
     --resource-group $rg2 `
     --parameters pName=$PolicyName2 `
-                    pLocation='westus' `
-                        pDisplayName=$PolicyDisplayName2 `
-                            pProject=$Project
+                    pLocation='westus'
 
 az deployment sub create `
     --name '00002-policy3-Deployment-4-3' `
@@ -89,19 +81,17 @@ az deployment sub create `
     --template-file './.policies/azure-policy-deployifnotexists.bicep' `
     --subscription $pSubscriptionName `
     --parameters pName=$PolicyName3 `
-                    pDisplayName=$PolicyDisplayName3 `
-                        pCategory='Network' `
-                                pRGName=$rg3 `
-                                    pNsgName=$NsgName `
-                                        pProject=$Project
+                    pCategory='Network' `
+                        pVersion=$policyVersion `
+                            pRGName=$rg3 `
+                                pNsgName=$NsgName
 
 # #JLopez-20250919: Assignin the policy definition.
 az deployment group create `
     --name '00002-policy3-Assigment-4-3-1' `
     --template-file './.policies/azure-policy-deployifnotexists-assignment.bicep' `
     --resource-group $rg3 `
-    --parameters pName=$PolicyName3 `
-                    pProject=$Project
+    --parameters pName=$PolicyName3
 
 #JLopez-20250819: Deploying the network interface and the virtual network.
 $subnetID = $(
@@ -109,8 +99,8 @@ $subnetID = $(
                     --name '00002-vnet-subnet-Deployment-6' `
                     --resource-group $rg1 `
                     --template-file '../infra/bicep/02.- network/vnet-1-subnet-1.bicep' `
-                    --parameters pAddressPrefix='11.0.0.0/16' `
-                                    pSubnetPrefix='11.0.0.0/24' `
+                    --parameters pAddressPrefix='11.1.0.0/16' `
+                                    pSubnetPrefix='11.1.0.0/24' `
                                         pProject=$Project `
                     --query properties.outputs.subnetID.value `
                     -o tsv
@@ -157,9 +147,10 @@ $subnetID = $(
                     --name '00002-vnet-subnet-Deployment-9' `
                     --resource-group $rg2 `
                     --template-file '../infra/bicep/02.- network/vnet-1-subnet-1.bicep' `
-                    --parameters pAddressPrefix='11.0.0.0/16' `
-                                    pSubnetPrefix='11.0.0.0/24' `
-                                        pProject=$Project `
+                    --parameters pLocation='brazilus' `
+                                    pAddressPrefix='11.2.0.0/16' `
+                                        pSubnetPrefix='11.2.0.0/24' `
+                                            pProject=$Project `
                     --query properties.outputs.subnetID.value `
                     -o tsv
             )
@@ -171,11 +162,11 @@ Write-Host "Second VM: $vmrg2" -BackgroundColor Green
 #JLopez-20250826: Deploying the NIC.
 $nicName = $(
             az deployment group create `
-                --name '00002-nic-Deployment-9' `
+                --name '00002-nic-Deployment-10' `
                 --resource-group $rg2 `
                 --template-file '../infra/bicep/02.- network/network-interface-nic.bicep' `
                 --parameters pVmName=$vmrg2 `
-                                pLocation='westus' `
+                                pLocation='brazilus' `
                                     pSubnetId=$subnetID `
                                         pProject=$Project `
                 --query properties.outputs.nicName.value `
@@ -185,7 +176,7 @@ $nicName = $(
 Write-Host "Second VM - NIC: $nicName" -BackgroundColor Green
 
 az deployment group create `
-    --name '00002-rg2-vm2-linux-Deployment-8' `
+    --name '00002-rg2-vm2-linux-Deployment-11' `
     --resource-group $rg2 `
     --template-file '../infra/bicep/03.- virtual machine/simple-vm-linux-ubuntu.bicep' `
     --parameters pVmSize='Standard_A1_v2' `
@@ -193,5 +184,50 @@ az deployment group create `
                         pUserName='azureuser' `
                             pPassword=$pass `
                                 pNicName=$nicName `
-                                    pLocation='westus' `
+                                    pLocation='brazilus' `
                                         pVmName=$vmrg2
+
+#JLopez-20250922: Deploying the linux virtual machine in the second resource group.
+$subnetID = $(
+                az deployment group create `
+                    --name '00002-vnet-subnet-Deployment-12' `
+                    --resource-group $rg3 `
+                    --template-file '../infra/bicep/02.- network/vnet-1-subnet-1.bicep' `
+                    --parameters pAddressPrefix='11.3.0.0/16' `
+                                    pSubnetPrefix='11.3.0.0/24' `
+                                        pProject=$Project `
+                    --query properties.outputs.subnetID.value `
+                    -o tsv
+            )
+Write-Host "Third subnet: $subnetID" -BackgroundColor Green
+
+$vmrg3 = "$vmGenericName-rg3"
+
+Write-Host "Third VM: $vmrg3" -BackgroundColor Green
+#JLopez-20250826: Deploying the NIC.
+$nicName = $(
+            az deployment group create `
+                --name '00002-nic-Deployment-13' `
+                --resource-group $rg3 `
+                --template-file '../infra/bicep/02.- network/network-interface-nic.bicep' `
+                --parameters pVmName=$vmrg3 `
+                                pLocation='westus' `
+                                    pSubnetId=$subnetID `
+                                        pProject=$Project `
+                --query properties.outputs.nicName.value `
+                -o tsv
+)
+
+Write-Host "Third VM - NIC: $nicName" -BackgroundColor Green
+
+az deployment group create `
+    --name '00002-rg2-vm2-linux-Deployment-14' `
+    --resource-group $rg3 `
+    --template-file '../infra/bicep/03.- virtual machine/simple-vm-linux-ubuntu.bicep' `
+    --parameters pVmSize='Standard_A1_v2' `
+                    pProject=$Project `
+                        pUserName='azureuser' `
+                            pPassword=$pass `
+                                pNicName=$nicName `
+                                    pLocation='westus' `
+                                        pVmName=$vmrg3
