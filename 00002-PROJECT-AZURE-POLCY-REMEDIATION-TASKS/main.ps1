@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     09-19-2025
+#Modified date:     09-23-2025
 
 [CmdletBinding()]
 param (
@@ -75,23 +75,6 @@ az deployment group create `
     --parameters pName=$PolicyName2 `
                     pLocation='westus'
 
-az deployment sub create `
-    --name '00002-policy3-Deployment-4-3' `
-    --location 'eastus' `
-    --template-file './.policies/azure-policy-deployifnotexists.bicep' `
-    --subscription $pSubscriptionName `
-    --parameters pName=$PolicyName3 `
-                    pCategory='Network' `
-                        pVersion=$policyVersion `
-                            pRGName=$rg3 `
-                                pNsgName=$NsgName
-
-# #JLopez-20250919: Assignin the policy definition.
-az deployment group create `
-    --name '00002-policy3-Assigment-4-3-1' `
-    --template-file './.policies/azure-policy-deployifnotexists-assignment.bicep' `
-    --resource-group $rg3 `
-    --parameters pName=$PolicyName3
 
 #JLopez-20250819: Deploying the network interface and the virtual network.
 $subnetID = $(
@@ -187,7 +170,7 @@ az deployment group create `
                                     pLocation='brazilus' `
                                         pVmName=$vmrg2
 
-#JLopez-20250922: Deploying the linux virtual machine in the second resource group.
+#JLopez-20250922: Deploying the linux virtual machine in the third resource group.
 $subnetID = $(
                 az deployment group create `
                     --name '00002-vnet-subnet-Deployment-12' `
@@ -219,6 +202,25 @@ $nicName = $(
 )
 
 Write-Host "Third VM - NIC: $nicName" -BackgroundColor Green
+
+az deployment sub create `
+    --name '00002-policy3-Deployment-4-3' `
+    --location 'eastus' `
+    --template-file './.policies/azure-policy-deployifnotexists.bicep' `
+    --subscription $pSubscriptionName `
+    --parameters pName=$PolicyName3 `
+                    pCategory='Network' `
+                        pVersion=$policyVersion `
+                            pRGName=$rg3 `
+                                pNsgName=$NsgName `
+                                    pNicName=$nicName
+
+# #JLopez-20250919: Assignin the policy definition.
+az deployment group create `
+    --name '00002-policy3-Assigment-4-3-1' `
+    --template-file './.policies/azure-policy-deployifnotexists-assignment.bicep' `
+    --resource-group $rg3 `
+    --parameters pName=$PolicyName3
 
 az deployment group create `
     --name '00002-rg2-vm2-linux-Deployment-14' `

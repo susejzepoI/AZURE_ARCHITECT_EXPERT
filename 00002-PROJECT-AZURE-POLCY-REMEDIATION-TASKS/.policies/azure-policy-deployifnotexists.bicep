@@ -5,6 +5,7 @@ param pCategory             string
 param pVersion              string = '1.0.0'
 param pRGName               string
 param pNsgName              string
+param pNicName              string
 
 var displayName     = pName
 var description     = 'Deploy a network segurity group in the ${pRGName} if not exists.'
@@ -35,17 +36,30 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
         allof: [
           {
             field: 'type'
-            equals: 'Microsoft.Resources/resourceGroups'
+            equals: 'Microsoft.Network/networkSecurityGroups'
           }
+          /*
+            JLopez-20250923:
+            Check a valid alias for the namespace.
+            source: https://learn.microsoft.com/en-us/answers/questions/39417/(azure-policy)-alias-is-not-being-recognized
+            
+            $temp = Get-AzPolicyAlias -Namespace 'Microsoft.Network'
+            $temp.aliases | Where-Object { $_.Name -like '*networkSecurityGroups*' } | Select-Object -Property Name
+
+          */
           {
-            count: {
-              field: 'Microsoft.Network/networkSecurityGroups/securityRules[*]'
-              where: {
-                field: 'Microsoft.Network/networkSecurityGroups/SecurityRules[*].name'
-                equals: pNsgName
-              }
+            not: {
+              anyOf: [
+                {
+                  field: 'Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRanges'
+                  equals: '8080'
+                }
+                {
+                  field: 'Microsoft.Network/networkSecurityGroups/networkInterfaces[*].name'
+                  equals: pNicName
+                }
+              ]
             }
-            equals: 0
           }
         ]
       }
