@@ -33,35 +33,35 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
     }
     policyRule:{
       if: {
-        allof: [
-          {
-            field: 'type'
-            equals: 'Microsoft.Network/networkSecurityGroups'
-          }
-          /*
-            JLopez-20250923:
-            Check a valid alias for the namespace.
-            source: https://learn.microsoft.com/en-us/answers/questions/39417/(azure-policy)-alias-is-not-being-recognized
-            
-            $temp = Get-AzPolicyAlias -Namespace 'Microsoft.Network'
-            $temp.aliases | Where-Object { $_.Name -like '*networkSecurityGroups*' } | Select-Object -Property Name
+        count: {
+          field: 'Microsoft.Network/networkSecurityGroups/securityRules[*]'
+          where: {
+            allOf: [
+              /*
+                JLopez-20250923:
+                Check a valid alias for the namespace.
+                source: https://learn.microsoft.com/en-us/answers/questions/39417/(azure-policy)-alias-is-not-being-recognized
+                
+                $temp = Get-AzPolicyAlias -Namespace 'Microsoft.Network'
+                $temp.aliases | Where-Object { $_.Name -like '*networkSecurityGroups*' } | Select-Object -Property Name
 
-          */
-          {
-            not: {
-              anyOf: [
-                {
-                  field: 'Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRanges'
-                  equals: '8080'
-                }
-                {
-                  field: 'Microsoft.Network/networkSecurityGroups/networkInterfaces[*].name'
-                  equals: pNicName
-                }
-              ]
-            }
-          }
-        ]
+              */
+              {
+                field: 'Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRanges'
+                equals: '8080'
+              }
+              {
+                field: 'Microsoft.Network/networkSecurityGroups/securityRules[*].access'
+                equals: 'Deny'
+              }
+              {
+                field: 'Microsoft.Network/networkSecurityGroups/securityRules[*].direction'
+                equals: 'Outbound'
+              }
+            ]
+          } 
+        }
+        equals: 0
       }
       then: {
         effect: 'deployIfNotExists'
