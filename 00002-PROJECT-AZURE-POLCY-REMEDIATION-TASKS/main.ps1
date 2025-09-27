@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     09-23-2025
+#Modified date:     09-26-2025
 
 [CmdletBinding()]
 param (
@@ -67,7 +67,7 @@ az deployment sub create `
                         pCategory='Deny' `
                             pVersion=$policyVersion
 
-# #JLopez-20250917: Assignin the policy definition.
+#JLopez-20250917: Assignin the policy definition.
 az deployment group create `
     --name '00002-policy2-Assigment-4-2-1' `
     --template-file './.policies/azure-policy-deny-location-assignment.bicep' `
@@ -215,12 +215,22 @@ az deployment sub create `
                                 pNsgName=$NsgName `
                                     pNicName=$nicName
 
-# #JLopez-20250919: Assignin the policy definition.
+#JLopez-20250919: Assigiment the policy definition.
 az deployment group create `
     --name '00002-policy3-Assigment-4-3-1' `
     --template-file './.policies/azure-policy-deployifnotexists-assignment.bicep' `
     --resource-group $rg3 `
     --parameters pName=$PolicyName3
+
+#JLopez-20250926: 
+# Creating a remediation task for the policy definition deployifnotexists.
+# The deployifnotexists effect doesn't automatically remediate existing non-compliant resources.
+# we need to create a remediation task to trigger the deployment.
+# After the command runs, you can check progress: az policy remediation list --resource-group $rg3 --output table
+az policy remediation create `
+    --name '00002-policy3-Remediation-4-3-2'  `
+    --policy-assigment "Assignment-$PolicyName3" `
+    --resource-group $rg3
 
 az deployment group create `
     --name '00002-rg2-vm2-linux-Deployment-14' `
