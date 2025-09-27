@@ -25,7 +25,12 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
   properties: {
     displayName: displayName
     policyType: 'Custom'
-    mode: 'Indexed'
+    /*
+      modes are:
+        - all: evaluate resource groups, subscriptions, and all resource types
+        - indexed: only evaluate resource types that support tags and location
+    */
+    mode: 'all'
     description: description
     metadata: {
       version: pVersion
@@ -33,40 +38,18 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
     }
     policyRule:{
       if: {
-        count: {
-          field: 'Microsoft.Network/networkSecurityGroups/securityRules[*]'
-          where: {
-            allOf: [
-              /*
-                JLopez-20250923:
-                Check a valid alias for the namespace.
-                source: https://learn.microsoft.com/en-us/answers/questions/39417/(azure-policy)-alias-is-not-being-recognized
-                
-                $temp = Get-AzPolicyAlias -Namespace 'Microsoft.Network'
-                $temp.aliases | Where-Object { $_.Name -like '*networkSecurityGroups*' } | Select-Object -Property Name
-
-              */
-              {
-                field: 'Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRanges'
-                equals: '8080'
-              }
-              {
-                field: 'Microsoft.Network/networkSecurityGroups/securityRules[*].access'
-                equals: 'Deny'
-              }
-              {
-                field: 'Microsoft.Network/networkSecurityGroups/securityRules[*].direction'
-                equals: 'Outbound'
-              }
-            ]
-          } 
-        }
-        equals: 0
+        allof:[
+          {
+            field: 'name'
+            equals: pRGName
+          }
+        ]
       }
       then: {
         effect: 'deployIfNotExists'
         details: {
           type: 'Microsoft.Network/networkSecurityGroups'
+          existenceScope: 'ResourceGroup'
           roleDefinitionIds: [
             '/providers/Microsoft.Authorization/roleDefinitions/de139f84-1756-47ae-9be6-808fbbe84772' // Contributor
           ]
@@ -75,7 +58,7 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
               mode: 'incremental'
               template: {
                 schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#'
-                contentVersion: '1.0.0.0'
+                contentVersion: pVersion
                 resources: [
                   {
                     type: 'Microsoft.Network/networkSecurityGroups'
@@ -92,3 +75,4 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
     }
   }
 }
+
