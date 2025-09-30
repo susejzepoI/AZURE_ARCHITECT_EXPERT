@@ -5,7 +5,6 @@ param pCategory             string
 param pVersion              string = '1.0.0'
 param pRGName               string
 param pNsgName              string
-param pNicName              string
 
 var displayName     = pName
 var description     = 'Deploy a network segurity group in the ${pRGName} if not exists.'
@@ -30,7 +29,7 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
         - all: evaluate resource groups, subscriptions, and all resource types
         - indexed: only evaluate resource types that support tags and location
     */
-    mode: 'all'
+    mode: 'All'
     description: description
     metadata: {
       version: pVersion
@@ -38,7 +37,11 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
     }
     policyRule:{
       if: {
-        allof:[
+        allOf: [
+          {
+            field: 'type'
+            equals: 'Microsoft.Resources/subscriptions/resourceGroups'
+          }
           {
             field: 'name'
             equals: pRGName
@@ -46,16 +49,23 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
         ]
       }
       then: {
-        effect: 'deployIfNotExists'
+        effect: 'DeployIfNotExists'
         details: {
           type: 'Microsoft.Network/networkSecurityGroups'
-          existenceScope: 'ResourceGroup'
+          deploymentScope : 'ResourceGroup'
+          evaluationDelay: 'AfterProvisioningSuccess'
           roleDefinitionIds: [
-            '/providers/Microsoft.Authorization/roleDefinitions/de139f84-1756-47ae-9be6-808fbbe84772' // Contributor
+            //JLopez-20250825: The b24988ac-6180-42a0-ab88-20f7382dd24c represents the Contributor role.
+            //                 You can verify it using the following command: az role definition list --name b24988ac-6180-42a0-ab88-20f7382dd24c
+            subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c') // Contributor
           ]
+          existenceCondition: {
+            field: 'name'
+            equals: pNsgName
+          }
           deployment: {
             properties: {
-              mode: 'incremental'
+              mode: 'Incremental'
               template: {
                 schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#'
                 contentVersion: pVersion
@@ -65,9 +75,11 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
                     apiVersion: '2023-05-01'
                     name: pNsgName
                     location: myRG.location
+                    properties: {}
                   }
                 ]
               }
+              parameters: {}
             }
           }
         }
