@@ -14,6 +14,7 @@ var description     = 'Deploy a network segurity group in the ${pRGName} if not 
   source: https://learn.microsoft.com/en-us/azure/governance/policy/concepts/effect-deploy-if-not-exists#deployifnotexists-properties
   Source: https://github.com/Azure/azure-policy/tree/master/built-in-policies
   source: https://learn.microsoft.com/en-us/azure/governance/policy/concepts/effect-deploy-if-not-exists#deployifnotexists-example
+  source: https://learn.microsoft.com/en-us/azure/governance/policy/samples/pattern-deploy-resources
 */
 resource myRG 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
   name: pRGName
@@ -52,30 +53,31 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
         effect: 'DeployIfNotExists'
         details: {
           type: 'Microsoft.Network/networkSecurityGroups'
-          deploymentScope : 'ResourceGroup'
-          evaluationDelay: 'AfterProvisioningSuccess'
-          roleDefinitionIds: [
-            //JLopez-20250825: The b24988ac-6180-42a0-ab88-20f7382dd24c represents the Contributor role.
-            //                 You can verify it using the following command: az role definition list --name b24988ac-6180-42a0-ab88-20f7382dd24c
-            subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c') // Contributor
-          ]
+          resourceGroupName: myRG.name
           existenceCondition: {
             field: 'name'
             equals: pNsgName
           }
+          //deploymentScope : 'ResourceGroup'
+          //evaluationDelay: 'AfterProvisioningSuccess'
+          roleDefinitionIds: [
+            //JLopez-20250825: The b24988ac-6180-42a0-ab88-20f7382dd24c represents the Contributor role.
+            //                 You can verify it using the following command: az role definition list --name 4d97b98b-1d4f-4787-a291-c67834d212e7
+            // subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4d97b98b-1d4f-4787-a291-c67834d212e7') // Network Contributor
+            '/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7' // Network Contributor
+          ]
           deployment: {
             properties: {
-              mode: 'Incremental'
+              mode: 'incremental'
               template: {
-                schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#'
+                schema: 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#'
                 contentVersion: pVersion
                 resources: [
                   {
+                    apiVersion: '2020-05-01'
                     type: 'Microsoft.Network/networkSecurityGroups'
-                    apiVersion: '2023-05-01'
                     name: pNsgName
                     location: myRG.location
-                    properties: {}
                   }
                 ]
               }
