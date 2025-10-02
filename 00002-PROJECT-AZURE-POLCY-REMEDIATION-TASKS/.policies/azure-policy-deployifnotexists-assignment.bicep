@@ -2,7 +2,8 @@ targetScope = 'resourceGroup'
 
 param pName                 string
 
-var AssignmentName  = 'Assignment-${pName}'
+var AssignmentName      = 'Assignment-${pName}'
+var RBACAssignmentName  = 'RBAC-${pName}'
 
 resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefinitions@2020-03-01' existing = {
   name: pName
@@ -26,5 +27,16 @@ resource policyAssignmentDeployIfNotExists 'Microsoft.Authorization/policyAssign
   }
   identity: {
     type: 'SystemAssigned'
+  }
+}
+
+//JLopez-20251001: Grant the assignment managed identity the necessary permissions on this resource group.
+resource RBACRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(RBACAssignmentName)
+  scope: resourceGroup() 
+  properties: {
+    roleDefinitionId: '/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7'
+    principalId: policyAssignmentDeployIfNotExists.identity.principalId
+    principalType: 'ServicePrincipal'
   }
 }
