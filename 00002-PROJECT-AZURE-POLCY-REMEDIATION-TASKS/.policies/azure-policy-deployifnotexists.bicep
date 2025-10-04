@@ -13,6 +13,7 @@ var description     = 'Deploy a network segurity group in the ${pRGName} if not 
   JLopez-20250909: Policy templates.
   source: https://learn.microsoft.com/en-us/azure/governance/policy/concepts/effect-deploy-if-not-exists#deployifnotexists-properties
   Source: https://github.com/Azure/azure-policy/tree/master/built-in-policies
+  source: https://github.com/Azure/azure-policy/tree/master/samples/Network/deploy-network-watcher-when-virtual-network-created
   source: https://learn.microsoft.com/en-us/azure/governance/policy/concepts/effect-deploy-if-not-exists#deployifnotexists-example
   source: https://learn.microsoft.com/en-us/azure/governance/policy/samples/pattern-deploy-resources
 */
@@ -50,7 +51,7 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
         ]
       }
       then: {
-        effect: 'DeployIfNotExists'
+        effect: 'deployIfNotExists'
         details: {
           type: 'Microsoft.Network/networkSecurityGroups'
           resourceGroupName: myRG.name
@@ -70,7 +71,7 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
             properties: {
               mode: 'incremental'
               template: {
-                schema: 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#'
+                '$schema': 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#'
                 contentVersion: pVersion
                 resources: [
                   {
