@@ -2,7 +2,7 @@ targetScope = 'subscription'
 
 param pName                 string
 param pCategory             string
-param pVersion              string = '1.0.0'
+param pVersion              string = '1.0.0.0'
 param pRGName               string
 param pNsgName              string
 
@@ -16,6 +16,7 @@ var description     = 'Deploy a network segurity group in the ${pRGName} if not 
   source: https://github.com/Azure/azure-policy/tree/master/samples/Network/deploy-network-watcher-when-virtual-network-created
   source: https://learn.microsoft.com/en-us/azure/governance/policy/concepts/effect-deploy-if-not-exists#deployifnotexists-example
   source: https://learn.microsoft.com/en-us/azure/governance/policy/samples/pattern-deploy-resources
+  source: https://learn.microsoft.com/en-us/azure/templates/microsoft.network/networksecuritygroups?pivots=deployment-language-arm-template#securityrulepropertiesformat-1
 */
 resource myRG 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
   name: pRGName
@@ -64,7 +65,6 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
           roleDefinitionIds: [
             //JLopez-20250825: The b24988ac-6180-42a0-ab88-20f7382dd24c represents the Contributor role.
             //                 You can verify it using the following command: az role definition list --name 4d97b98b-1d4f-4787-a291-c67834d212e7
-            // subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4d97b98b-1d4f-4787-a291-c67834d212e7') // Network Contributor
             '/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7' // Network Contributor
           ]
           deployment: {
@@ -92,6 +92,7 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
                             access: 'Allow'
                             priority: 300
                             direction: 'Inbound'
+                            description: 'Allow RDP connectivity (testing purpose)'
                           }
                         }
                         {
@@ -105,6 +106,7 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
                             access: 'Deny'
                             priority: 4000
                             direction: 'Outbound'
+                            Description: 'Deny internet connectivity'
                           }
                         }
                       ]
