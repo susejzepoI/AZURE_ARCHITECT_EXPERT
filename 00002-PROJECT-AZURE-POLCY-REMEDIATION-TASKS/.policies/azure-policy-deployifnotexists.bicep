@@ -60,7 +60,7 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
             equals: pNsgName
           }
           //deploymentScope : 'ResourceGroup'
-          //evaluationDelay: 'AfterProvisioningSuccess'
+          evaluationDelay: 'AfterProvisioningSuccess'
           roleDefinitionIds: [
             //JLopez-20250825: The b24988ac-6180-42a0-ab88-20f7382dd24c represents the Contributor role.
             //                 You can verify it using the following command: az role definition list --name 4d97b98b-1d4f-4787-a291-c67834d212e7
@@ -79,6 +79,36 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
                     type: 'Microsoft.Network/networkSecurityGroups'
                     name: pNsgName
                     location: myRG.location
+                    properties: {
+                      securityRules: [
+                        {
+                          name: 'default-allow-rdp'
+                          properties: {
+                            protocol: 'Tcp'
+                            sourcePortRange: '*'
+                            sourceAddressPrefix: '*'
+                            destinationPortRange: '3389'
+                            destinationAddressPrefix: '*'
+                            access: 'Allow'
+                            priority: 300
+                            direction: 'Inbound'
+                          }
+                        }
+                        {
+                          name: 'deny-internet-connectivity'
+                          properties: {
+                            protocol: '*'
+                            sourcePortRange: '*'
+                            sourceAddressPrefix: '*'
+                            destinationPortRange: '*'
+                            destinationAddressPrefix: 'Internet'
+                            access: 'Deny'
+                            priority: 4000
+                            direction: 'Outbound'
+                          }
+                        }
+                      ]
+                    }
                   }
                 ]
               }
