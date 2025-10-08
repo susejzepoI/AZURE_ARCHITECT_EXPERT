@@ -122,4 +122,3 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
     }
   }
 }
-

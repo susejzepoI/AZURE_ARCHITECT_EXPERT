@@ -9,6 +9,11 @@ param pNsgName              string
 var displayName     = pName
 var description     = 'Modify all the NIC within the ${pRGName} resource group to add the NSG ${pNsgName}.'
 
+resource nsg 'Microsoft.Network/networkSecurityGroups@2022-09-01' existing = {
+  name: pNsgName
+  scope: resourceGroup(pRGName)
+}
+
 resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefinitions@2020-03-01' = {
   name: pName
   properties: {
@@ -34,21 +39,13 @@ resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefini
           description: 'The name of the resource group where the NICs are deployed.'
         }
       }
-      nsgName: {
-        type: 'String'
-        defaultValue: pNsgName
-        metadata: {
-          displayName: 'Network Security Group Name'
-          description: 'The name of the Network Security Group to associate with the NICs.'
-        }
-      }
     }
     policyRule: {
       if: {
         allOf: [
           {
-            field: 'resourceGroup'
-            equals: '''[parameters('pRGName')]'''
+            field: 'name'
+            equals: '''[parameters('rgName')]'''
           }
           {
             field: 'type'
@@ -73,7 +70,7 @@ resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefini
               operation: 'addOrReplace'
               field: 'Microsoft.Network/networkInterfaces/networkSecurityGroup'
               value: {
-                id: '''[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]'''
+                id: nsg.id
               }
             }
           ]
