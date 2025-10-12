@@ -31,28 +31,12 @@ resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefini
       category: pCategory
     }
     parameters: {
-      subscriptionId: {
+      nsgId: {
         type: 'String'
-        defaultValue: subscription().subscriptionId
+        defaultValue: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${pRGName}/providers/Microsoft.Network/networkSecurityGroups/${nsg.name}'
         metadata: {
-          displayName: 'ID of the target subscription '
-          description: 'The ID of the target subscription.'
-        }
-      }
-      rgName: {
-        type: 'String'
-        defaultValue: pRGName
-        metadata: {
-          displayName: 'Resource Group Name'
-          description: 'The name of the resource group where the NICs are deployed.'
-        }
-      }
-      nsgName: {
-        type: 'String'
-        defaultValue: nsg.name
-        metadata: {
-          displayName: 'Network security group name'
-          description: 'The name of the network security group.'
+          displayName: 'ID of the target nsg.'
+          description: 'The ID of the target network segurity group.'
         }
       }
     }
@@ -65,7 +49,7 @@ resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefini
           }
           {
             field: 'id'
-            equals: '''/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('rgName')]/providers/Microsoft.Network/networkSecurityGroups/[parameters('nsgName')]'''
+            equals: '''[parameters('nsgId')]'''
           }
           {
             field: 'Microsoft.Network/networkInterfaces/networkSecurityGroup.id'
