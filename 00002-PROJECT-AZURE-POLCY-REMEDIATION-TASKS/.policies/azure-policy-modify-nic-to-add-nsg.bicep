@@ -41,6 +41,11 @@ resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefini
       }
     }
     policyRule: {
+      /*
+        JLopez-20251013: 
+        Check available aliases
+        Get-AzPolicyAlias | Select-Object -ExpandProperty 'Aliases' | Where-Object { $_.DefaultMetadata.Attributes -eq 'Modifiable'} | Where-object {$_.Name -like "*networkinterface*"} | select-object "name"
+      */
       if: {
         allOf: [
           {
@@ -48,12 +53,8 @@ resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefini
             equals: 'Microsoft.Network/networkInterfaces'
           }
           {
-            field: 'id'
-            equals: '''[parameters('nsgId')]'''
-          }
-          {
             field: 'Microsoft.Network/networkInterfaces/networkSecurityGroup.id'
-            equals: ''
+            equals: '''[parameters('nsgId')]'''
           }
         ]
       }
