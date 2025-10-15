@@ -30,16 +30,7 @@ resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefini
       version: pVersion
       category: pCategory
     }
-    parameters: {
-      nsgId: {
-        type: 'String'
-        defaultValue: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${pRGName}/providers/Microsoft.Network/networkSecurityGroups/${nsg.name}'
-        metadata: {
-          displayName: 'ID of the target nsg.'
-          description: 'The ID of the target network segurity group.'
-        }
-      }
-    }
+    parameters: {}
     policyRule: {
       /*
         JLopez-20251013: 
@@ -51,10 +42,6 @@ resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefini
           {
             field: 'type'
             equals: 'Microsoft.Network/networkInterfaces'
-          }
-          {
-            field: 'Microsoft.Network/networkInterfaces/networkSecurityGroup.id'
-            equals: '''[parameters('nsgId')]'''
           }
         ]
       }
@@ -68,10 +55,14 @@ resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefini
           ]
           operations: [
             {
-              operation: 'addOrReplace'
+              operation: 'Add'
               field: 'Microsoft.Network/networkInterfaces/networkSecurityGroup'
               value: {
                 id: nsg.id
+              }
+              condition: {
+                field: 'Microsoft.Network/networkInterfaces/networkSecurityGroup.id'
+                exists: false
               }
             }
           ]
