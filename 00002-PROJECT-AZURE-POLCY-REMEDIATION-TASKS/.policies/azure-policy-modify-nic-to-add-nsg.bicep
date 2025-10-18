@@ -5,14 +5,10 @@ param pCategory             string
 param pVersion              string = '1.0.0.0'
 param pRGName               string
 param pNsgName              string
+param pNicName              string
 
 var displayName     = pName
 var description     = 'Modify all the NIC within the ${pRGName} resource group to add the NSG ${pNsgName}.'
-
-resource nsg 'Microsoft.Network/networkSecurityGroups@2022-09-01' existing = {
-  name: pNsgName
-  scope: resourceGroup(pRGName)
-}
 
 resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefinitions@2020-03-01' = {
   name: pName
@@ -30,20 +26,33 @@ resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefini
       version: pVersion
       category: pCategory
     }
-    parameters: {}
+    parameters: {
+      nsgId: {
+        type: 'String'
+        metadata: {
+          displayName: 'Network Security Group ID'
+          description: 'The Resource ID of the Network Security Group to be added to the Network Interfaces.'
+        }
+        defaultValue: '${subscription().id}/resourceGroups/${pRGName}/providers/Microsoft.Network/networkSecurityGroups/${pNsgName}'
+      }
+      nicId: {
+        type: 'String'
+        metadata: {
+          displayName: 'Network Interface ID'
+          description: 'The Resource ID of the Network Interface.'
+        }
+        defaultValue: '${subscription().id}/resourceGroups/${pRGName}/providers/Microsoft.Network/networkSecurityGroups/${pNicName}'
+      }
+    }
     policyRule: {
       /*
         JLopez-20251013: 
         Check available aliases
-        Get-AzPolicyAlias | Select-Object -ExpandProperty 'Aliases' | Where-Object { $_.DefaultMetadata.Attributes -eq 'Modifiable'} | Where-object {$_.Name -like "*networkinterface*"} | select-object "name"
+        Get-AzPolicyAlias | Select-Object -ExpandProperty 'Aliases' | Where-Object { $_.DefaultMetadata.Attributes -eq 'Modifiable'} | Where-object {$_.Name -like "Microsoft.network/networkinterface*id*"} | select-object "name"
       */
       if: {
-        allOf: [
-          {
-            field: 'type'
-            equals: 'Microsoft.Network/networkInterfaces'
-          }
-        ]
+          field: 'id'
+          equals: '''[parameters('nicId')]'''
       }
       then: {
         effect: 'modify'
@@ -58,12 +67,12 @@ resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefini
               operation: 'Add'
               field: 'Microsoft.Network/networkInterfaces/networkSecurityGroup'
               value: {
-                id: nsg.id
+                id: '''[parameters('nsgId')]'''
               }
-              condition: {
-                field: 'Microsoft.Network/networkInterfaces/networkSecurityGroup.id'
-                exists: false
-              }
+              // condition: {
+              //   field: 'Microsoft.Network/networkInterfaces/networkSecurityGroup.id'
+              //   exists: false
+              // }
             }
           ]
         }

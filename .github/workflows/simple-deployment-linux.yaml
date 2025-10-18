@@ -30,7 +30,7 @@ jobs:
           curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
           az version
 
-      - name: copy files to the CI folder
+      - name: Copy files to the CI folder
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
