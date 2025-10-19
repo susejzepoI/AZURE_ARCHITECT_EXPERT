@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     10-10-2025
+#Modified date:     10-19-2025
 
 [CmdletBinding()]
 param (
@@ -26,6 +26,10 @@ $NsgName                = "$Project-nsg"
 $vmGenericName          = 'vm'
 
 $pass = Read-Host "Enter the password for all the virtual machines" -AsSecureString
+
+# ##########################################################################
+# JLopez-20250508: Deploying resources groups.
+# ##########################################################################
 
 #JLopez-20250508: Deploying the resource group at the subscription level, using a bicep template.
 az deployment sub create `
@@ -64,7 +68,7 @@ $vmrg1 = "$vmGenericName-rg1"
 
 Write-Host "First VM: $vmrg1" -BackgroundColor Green
 #JLopez-20250826: Deploying the NIC.
-$nicName = $(
+$outNicName = $(
             az deployment group create `
                 --name '00002-rg1-nic-Deployment-2' `
                 --resource-group $rg1 `
@@ -85,7 +89,7 @@ az deployment group create `
                     pProject=$Project `
                         pUserName='azureuser' `
                             pPassword=$pass `
-                                pNicName=$nicName `
+                                pNicName=$outNicName `
                                     pLocation='westus' `
                                         pVmName=$vmrg1
                                         
@@ -95,29 +99,40 @@ az deployment group create `
 
 #JLopez-20250823: Deploying the azure policy definition.
 az deployment sub create `
-    --name '00002-rg1-policy1-Deployment-4' `
+    --name '00002-rg1-policy1-Deployment-4-1' `
     --location 'westus' `
     --template-file './.policies/azure-policy-modify-enforce-tags.bicep' `
     --subscription $pSubscriptionName `
     --parameters pName=$PolicyName1 `
                     pCategory='Tags' `
                         pVersion=$policyVersion `
-                            pLocation='westus' `
-                                pTagName='Project' `
-                                    pTagValue=$ProjectTagValue
+                            pTagName='Project' `
+                                pTagValue=$ProjectTagValue
+
+#JLopez-20250919: Assigiment the policy definition.
+az deployment group create `
+    --name '00002-rg1-policy1-Assigment-4-2' `
+    --template-file './.policies/azure-policy-modify-enforce-tags-assignment.bicep' `
+    --resource-group $rg1 `
+    --parameters pName=$PolicyName1 `
+                    pLocation='westus'
 
 #JLopez-20251006: First policy definition, deployifnotexists nsg.
-Write-Host "first VM - NIC: $nicName" -BackgroundColor Green
-az deployment sub create `
-    --name '00002-rg1-policy2-Deployment-5-1' `
-    --location 'westus' `
-    --template-file './.policies/azure-policy-deployifnotexists.bicep' `
-    --subscription $pSubscriptionName `
-    --parameters pName=$PolicyName2 `
-                    pCategory='Network' `
-                        pVersion=$policyVersion `
-                            pRGName=$rg1 `
-                                pNsgName=$NsgName
+Write-Host "first VM - NIC: $outNicName" -BackgroundColor Green
+$outNsgName = $ (
+                az deployment sub create `
+                    --name '00002-rg1-policy2-Deployment-5-1' `
+                    --location 'westus' `
+                    --template-file './.policies/azure-policy-deployifnotexists.bicep' `
+                    --subscription $pSubscriptionName `
+                    --parameters pName=$PolicyName2 `
+                                    pCategory='Network' `
+                                        pVersion=$policyVersion `
+                                            pRGName=$rg1 `
+                                                pNsgName=$NsgName `
+                    --query properties.outputs.nsgName.value `
+                    -o tsv
+                )
 
 #JLopez-20250919: Assigiment the policy definition.
 az deployment group create `
@@ -147,8 +162,8 @@ az deployment sub create `
                     pCategory='Network' `
                         pVersion=$policyVersion `
                             pRGName=$rg1 `
-                                pNsgName=$NsgName `
-                                    pNicName=$nicName
+                                pNsgName=$outNsgName `
+                                    pNicName=$outNicName
 
 az deployment group create `
     --name '00002-rg1-policy3-Assigment-6-2' `
@@ -203,7 +218,7 @@ $vmrg2 = "$vmGenericName-rg2"
 
 Write-Host "Second VM: $vmrg2" -BackgroundColor Green
 #JLopez-20250826: Deploying the NIC.
-$nicName = $(
+$outNicName = $(
             az deployment group create `
                 --name '00002-rg2-nic-Deployment-9' `
                 --resource-group $rg2 `
@@ -216,7 +231,7 @@ $nicName = $(
                 -o tsv
 )
 
-Write-Host "Second VM - NIC: $nicName" -BackgroundColor Green
+Write-Host "Second VM - NIC: $outNicName" -BackgroundColor Green
 
 az deployment group create `
     --name '00002-rg2-vm2-linux-Deployment-10' `
@@ -226,6 +241,6 @@ az deployment group create `
                     pProject=$Project `
                         pUserName='azureuser' `
                             pPassword=$pass `
-                                pNicName=$nicName `
+                                pNicName=$outNicName `
                                     pLocation='brazilus' `
                                         pVmName=$vmrg2

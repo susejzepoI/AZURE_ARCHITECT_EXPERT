@@ -6,7 +6,6 @@ param pVersion              string = '1.0.0.0'
 param pRGName               string
 param pNsgName              string
 
-var displayName     = pName
 var description     = 'Deploy a network segurity group in the ${pRGName} if not exists.'
 
 /*
@@ -21,6 +20,8 @@ var description     = 'Deploy a network segurity group in the ${pRGName} if not 
 resource myRG 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
   name: pRGName
 }
+
+var displayName     = '${pName}-${uniqueString(myRG.id)}'
 
 resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefinitions@2020-03-01' = {
   name: pName
@@ -122,3 +123,7 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
     }
   }
 }
+
+//JLopez-20251019: Returning values using an output variable (source: https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/outputs?tabs=azure-powershell).
+output nsgName string = pNsgName
+

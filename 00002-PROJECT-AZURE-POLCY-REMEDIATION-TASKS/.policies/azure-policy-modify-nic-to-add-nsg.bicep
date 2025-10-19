@@ -41,7 +41,7 @@ resource policyDefinitionModifyNicToAddNsg 'Microsoft.Authorization/policyDefini
           displayName: 'Network Interface ID'
           description: 'The Resource ID of the Network Interface.'
         }
-        defaultValue: '${subscription().id}/resourceGroups/${pRGName}/providers/Microsoft.Network/networkSecurityGroups/${pNicName}'
+        defaultValue: '${subscription().id}/resourceGroups/${pRGName}/providers/Microsoft.Network/networkInterfaces/${pNicName}'
       }
     }
     policyRule: {
