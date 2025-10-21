@@ -7,6 +7,7 @@
 param (
     [Parameter()]
     [string]$pSubscriptionName      = 'Suscripción de Plataformas de MSDN',
+    [string]$ProjectTagName         = 'Project',
     [string]$ProjectTagValue        = 'az305'
 
 )
@@ -20,7 +21,7 @@ $policyVersion          = '1.0.0.0'
 $PolicyName1            = "$Project-Enforce-tags"
 $PolicyName2            = "$Project-Deploy-nsg-if-not-exists"
 $PolicyName3            = "$Project-Modify-nic-to-add-nsg"
-$PolicyName4           = "$Project-Deny-location"
+$PolicyName4            = "$Project-Deny-location"
 
 $NsgName                = "$Project-nsg"
 $vmGenericName          = 'vm'
@@ -106,7 +107,7 @@ az deployment sub create `
     --parameters pName=$PolicyName1 `
                     pCategory='Tags' `
                         pVersion=$policyVersion `
-                            pTagName='Project' `
+                            pTagName=$ProjectTagName `
                                 pTagValue=$ProjectTagValue
 
 #JLopez-20250919: Assigiment the policy definition.
@@ -244,3 +245,10 @@ az deployment group create `
                                 pNicName=$outNicName `
                                     pLocation='brazilus' `
                                         pVmName=$vmrg2
+
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "✅ Deployment completed successfully!"
+} else {
+    Write-Error "❌ Deployment failed. Check Azure CLI output above."
+    exit 1
+}
