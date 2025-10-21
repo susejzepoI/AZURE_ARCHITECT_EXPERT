@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     10-19-2025
+#Modified date:     10-20-2025
 
 [CmdletBinding()]
 param (
@@ -119,7 +119,7 @@ az deployment group create `
 
 #JLopez-20251006: First policy definition, deployifnotexists nsg.
 Write-Host "first VM - NIC: $outNicName" -BackgroundColor Green
-$outNsgName = $ (
+$outNsgName = $(
                 az deployment sub create `
                     --name '00002-rg1-policy2-Deployment-5-1' `
                     --location 'westus' `

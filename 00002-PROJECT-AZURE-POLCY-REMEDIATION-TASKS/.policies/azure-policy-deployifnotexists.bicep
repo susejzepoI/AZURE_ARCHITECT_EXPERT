@@ -26,7 +26,7 @@ var displayName     = '${pName}-${uniqueString(myRG.id)}'
 resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefinitions@2020-03-01' = {
   name: pName
   properties: {
-    displayName: displayName
+    displayName: pName
     policyType: 'Custom'
     /*
       modes are:
@@ -78,7 +78,7 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
                   {
                     apiVersion: '2020-05-01'
                     type: 'Microsoft.Network/networkSecurityGroups'
-                    name: pNsgName
+                    name: displayName
                     location: myRG.location
                     properties: {
                       securityRules: [
@@ -125,5 +125,5 @@ resource policyDefinitionDeployIfNotExists 'Microsoft.Authorization/policyDefini
 }
 
 //JLopez-20251019: Returning values using an output variable (source: https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/outputs?tabs=azure-powershell).
-output nsgName string = pNsgName
+output nsgName string = displayName
 
