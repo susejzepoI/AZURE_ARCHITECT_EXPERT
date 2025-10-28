@@ -40,3 +40,5 @@ resource policyAssignment 'Microsoft.Authorization/policyAssignments@2024-05-01'
     ]
   }
 }
+
+output policyAssignmentId string = guid(policyAssignment.id)

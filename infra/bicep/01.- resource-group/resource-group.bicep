@@ -7,3 +7,5 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
   name: pName
   location: pLocation
 }
+
+output resourceGroupId string = resourceGroup.id

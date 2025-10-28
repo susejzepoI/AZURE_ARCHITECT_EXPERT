@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     10-20-2025
+#Modified date:     10-27-2025
 
 [CmdletBinding()]
 param (
@@ -33,12 +33,17 @@ $pass = Read-Host "Enter the password for all the virtual machines" -AsSecureStr
 # ##########################################################################
 
 #JLopez-20250508: Deploying the resource group at the subscription level, using a bicep template.
-az deployment sub create `
-    --name '00002-rg1-Deployment-1' `
-    --location 'westus' `
-    --template-file '../infra/bicep/01.- resource-group/resource-group.bicep' `
-    --parameters pName=$rg1 pLocation='westus' `
-    --subscription $pSubscriptionName
+$outRg1Id = $(
+    az deployment sub create `
+        --name '00002-rg1-Deployment-1' `
+        --location 'westus' `
+        --template-file '../infra/bicep/01.- resource-group/resource-group.bicep' `
+        --parameters pName=$rg1 pLocation='westus' `
+        --subscription $pSubscriptionName `
+        --query properties.outputs.resourceGroupId.value `
+        -o tsv
+)
+
 
 az deployment sub create `
     --name '00002-rg2-Deployment-2' `
@@ -111,12 +116,30 @@ az deployment sub create `
                                 pTagValue=$ProjectTagValue
 
 #JLopez-20250919: Assigiment the policy definition.
-az deployment group create `
-    --name '00002-rg1-policy1-Assigment-4-2' `
-    --template-file './.policies/azure-policy-modify-enforce-tags-assignment.bicep' `
+$outPolicyAssignmentId = $(
+                            az deployment group create `
+                                --name '00002-rg1-policy1-Assigment-4-2' `
+                                --template-file './.policies/azure-policy-modify-enforce-tags-assignment.bicep' `
+                                --resource-group $rg1 `
+                                --parameters pName=$PolicyName1 `
+                                                pLocation='westus' `
+                                --query properties.outputs.policyAssignmentId.value `
+                                -o tsv
+                        )
+
+#JLopez-20251027: Adding the tag contributor role to the policy assignment.
+az role assignment create `
+    --assignee-object-id $outPolicyAssignmentId `
+    --assignee-principal-type 'ServicePrincipal' `
+    --role 'Tag Contributor' `
+    --scope $outRg1Id
+
+#JLopez-20251027: Creating a remediation task for the policy definition enforce-tags.
+az policy remediation create `
+    --name '00002-rg1-policy1-Remediation-4-3'  `
+    --policy-assignment "Assignment-$PolicyName1" `
     --resource-group $rg1 `
-    --parameters pName=$PolicyName1 `
-                    pLocation='westus'
+    --resource-discovery-mode 'ReEvaluateCompliance'
 
 #JLopez-20251006: First policy definition, deployifnotexists nsg.
 Write-Host "first VM - NIC: $outNicName" -BackgroundColor Green
