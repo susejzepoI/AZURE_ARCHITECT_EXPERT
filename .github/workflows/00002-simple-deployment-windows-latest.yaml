@@ -9,9 +9,13 @@ on:
     branches: [ "current" ]
   pull_request:
     branches: [ "current" ]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+
+#JLopez-20251028: Grant OIDC permissions
+permissions:
+  id-token: write
+  contents: read
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
