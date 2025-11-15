@@ -1,14 +1,18 @@
 #JLopez-20251013: Yaml files documentation: https://learnxinyminutes.com/yaml/
 # This is a basic workflow to help you get started with Actions
-name: simple-ci-linux
+name: 00002-simple-deployment-windows-latest
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "current" branch
   push:
     branches: [ "current" ]
+    paths:
+      - '00002-PROJECT-AZURE-POLCY-REMEDIATION-TASKS/**'
   pull_request:
     branches: [ "current" ]
+    paths:
+      - '00002-PROJECT-AZURE-POLCY-REMEDIATION-TASKS/**'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -42,7 +46,9 @@ jobs:
       - name: Run powershell deployment scripts.
         shell: pwsh
         run: |
+          $secure = ConvertTo-SecureString "${{ secrets.VDI_PASS }}" -AsPlainText -Force
           ./00002-PROJECT-AZURE-POLCY-REMEDIATION-TASKS/main.ps1 `
             -ProjectTagName "Environment" `
             -ProjectTagValue "QA"
+            -pPassword $secure
 
