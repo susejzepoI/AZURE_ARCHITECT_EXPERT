@@ -30,7 +30,7 @@ try {
 
     if(-not $pPassword){
         $pass = $null
-        $pass = Read-Host "Enter the password for all the virtual machines" -AsSecureString
+        # $pass = Read-Host "Enter the password for all the virtual machines" -AsSecureString
     }else{
         $bstr = $null
         $pass = $null
