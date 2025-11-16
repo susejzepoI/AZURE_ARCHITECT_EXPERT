@@ -48,7 +48,7 @@ jobs:
         run: |
           cd .\00002-PROJECT-AZURE-POLCY-REMEDIATION-TASKS\
           $secure = ConvertTo-SecureString ${{ secrets.VDI_PASS }} -AsPlainText -Force
-          ./main.ps1 `
+          .\main.ps1 `
             -ProjectTagName "Environment" `
             -ProjectTagValue "QA" `
             -pPassword $secure
