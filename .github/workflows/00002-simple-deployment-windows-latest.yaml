@@ -46,7 +46,7 @@ jobs:
       - name: Run powershell deployment scripts.
         shell: pwsh
         run: |
-          $secure = ConvertTo-SecureString "${{ secrets.VDI_PASS }}" -AsPlainText -Force
+          $secure = ConvertTo-SecureString ${{ secrets.VDI_PASS }} -AsPlainText -Force
           ./00002-PROJECT-AZURE-POLCY-REMEDIATION-TASKS/main.ps1 `
             -ProjectTagName "Environment" `
             -ProjectTagValue "QA"
