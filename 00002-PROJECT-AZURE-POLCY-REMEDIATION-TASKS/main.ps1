@@ -33,7 +33,7 @@ try {
     if(-not $pPassword){
         write-Host "No password provided. Please update the script to handle passwords securely." -BackgroundColor Yellow
         $pass = $null
-        # $pass = Read-Host "Enter the password for all the virtual machines" -AsSecureString
+        $pass = Read-Host "Enter the password for all the virtual machines" -AsSecureString
     }else{
         Write-Host "Password provided via parameter." -BackgroundColor Green
         $bstr = $null
