@@ -26,12 +26,16 @@ $PolicyName4            = "$Project-Deny-location"
 $NsgName                = "$Project-nsg"
 $vmGenericName          = 'vm'
 
+Write-Host "Starting deployment for project: $Project" -BackgroundColor Green
+
 try {
 
     if(-not $pPassword){
+        write-Host "No password provided. Please update the script to handle passwords securely." -BackgroundColor Yellow
         $pass = $null
         # $pass = Read-Host "Enter the password for all the virtual machines" -AsSecureString
     }else{
+        Write-Host "Password provided via parameter." -BackgroundColor Green
         $bstr = $null
         $pass = $null
         $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($pPassword)
