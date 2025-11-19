@@ -1,12 +1,12 @@
 targetScope = 'subscription'
 
 param pName                 string
-@allowed(['westus','Brazil'])
+@allowed(['westus','eastus'])
 param pLocation             string
 param pCategory             string
 param pVersion              string = '1.0.0'
 
-var description     = 'Policy to deny deployments on: ${pLocation}.'
+var description     = 'Policy to force deployments only in the location: ${pLocation}.'
 var displayName     = pName
 var name            = pName
 var tagExpr         = '''[parameters('allowedLocations')]'''

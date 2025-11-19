@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     11-16-2025
+#Modified date:     11-18-2025
 
 [CmdletBinding()]
 param (
@@ -243,7 +243,7 @@ try {
                         --name '00002-rg2-vnet-subnet-Deployment-8' `
                         --resource-group $rg2 `
                         --template-file '../infra/bicep/02.- network/vnet-1-subnet-1.bicep' `
-                        --parameters pLocation='brazilus' `
+                        --parameters pLocation='eastus2' `
                                         pAddressPrefix='11.2.0.0/16' `
                                             pSubnetPrefix='11.2.0.0/24' `
                                                 pProject=$Project `
@@ -262,7 +262,7 @@ try {
                     --resource-group $rg2 `
                     --template-file '../infra/bicep/02.- network/network-interface-nic.bicep' `
                     --parameters pVmName=$vmrg2 `
-                                    pLocation='brazilus' `
+                                    pLocation='eastus2' `
                                         pSubnetId=$subnetID `
                                             pProject=$Project `
                     --query properties.outputs.nicName.value `
@@ -280,7 +280,7 @@ try {
                             pUserName='azureuser' `
                                 pPassword=$pass `
                                     pNicName=$outNicName `
-                                        pLocation='brazilus' `
+                                        pLocation='eastus2' `
                                             pVmName=$vmrg2
 
     if ($LASTEXITCODE -eq 0) {

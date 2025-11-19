@@ -1,7 +1,7 @@
 targetScope = 'resourceGroup'
 
 param pName                 string
-@allowed(['westus','Brazil'])
+@allowed(['westus','eastus'])
 param pLocation             string
 
 var AssignmentName  = 'Assignment-${pName}'
