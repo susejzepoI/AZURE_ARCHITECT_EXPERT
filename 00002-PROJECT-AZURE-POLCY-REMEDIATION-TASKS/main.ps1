@@ -283,13 +283,6 @@ try {
                                         pLocation='eastus2' `
                                             pVmName=$vmrg2
 
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "✅ Deployment completed successfully!"
-    } else {
-        Write-Error "❌ Deployment failed. Check Azure CLI output above."
-        exit 1
-    }
-
 }
 catch {
    if ($bstr) { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr) }
