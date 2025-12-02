@@ -1,6 +1,6 @@
 targetScope = 'resourceGroup'
 
-param pName                 string
+param pName string
 
 var AssignmentName      = 'Assignment-${pName}'
 var RBACAssignmentName  = 'RBAC-${pName}'
