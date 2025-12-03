@@ -236,53 +236,69 @@ try {
         --resource-group $rg2 `
         --parameters pName=$PolicyName4 `
                         pLocation='westus'
+    try {
+        #JLopez-20250901: Deploying the linux virtual machine in the second resource group.
+        $subnetID = $(
+                        az deployment group create `
+                            --name '00002-rg2-vnet-subnet-Deployment-8' `
+                            --resource-group $rg2 `
+                            --template-file '../infra/bicep/02.- network/vnet-1-subnet-1.bicep' `
+                            --parameters pLocation='eastus2' `
+                                            pAddressPrefix='11.2.0.0/16' `
+                                                pSubnetPrefix='11.2.0.0/24' `
+                                                    pProject=$Project `
+                            --query properties.outputs.subnetID.value `
+                            -o tsv
+                    )
+        Write-Host "Second subnet: $subnetID" -BackgroundColor Green
+    }
+    catch {
+        if($_.Exception.Message -like "*PolicyViolation*"){
+            Write-Host "Can't deploy the subnet on resource group ($rg2) .Deployment blocked by 'Deny location' policy as expected." -BackgroundColor Yellow}
+    }
 
-    #JLopez-20250901: Deploying the linux virtual machine in the second resource group.
-    $subnetID = $(
+    try {
+        $vmrg2 = "$vmGenericName-rg2"
+
+        Write-Host "Second VM: $vmrg2" -BackgroundColor Green
+        #JLopez-20250826: Deploying the NIC.
+        $outNicName = $(
                     az deployment group create `
-                        --name '00002-rg2-vnet-subnet-Deployment-8' `
+                        --name '00002-rg2-nic-Deployment-9' `
                         --resource-group $rg2 `
-                        --template-file '../infra/bicep/02.- network/vnet-1-subnet-1.bicep' `
-                        --parameters pLocation='eastus2' `
-                                        pAddressPrefix='11.2.0.0/16' `
-                                            pSubnetPrefix='11.2.0.0/24' `
-                                                pProject=$Project `
-                        --query properties.outputs.subnetID.value `
-                        -o tsv
-                )
-    Write-Host "Second subnet: $subnetID" -BackgroundColor Green
-
-    $vmrg2 = "$vmGenericName-rg2"
-
-    Write-Host "Second VM: $vmrg2" -BackgroundColor Green
-    #JLopez-20250826: Deploying the NIC.
-    $outNicName = $(
-                az deployment group create `
-                    --name '00002-rg2-nic-Deployment-9' `
-                    --resource-group $rg2 `
-                    --template-file '../infra/bicep/02.- network/network-interface-nic.bicep' `
-                    --parameters pVmName=$vmrg2 `
-                                    pLocation='eastus2' `
-                                        pSubnetId=$subnetID `
-                                            pProject=$Project `
-                    --query properties.outputs.nicName.value `
-                    -o tsv
-    )
-
-    Write-Host "Second VM - NIC: $outNicName" -BackgroundColor Green
-
-    az deployment group create `
-        --name '00002-rg2-vm2-linux-Deployment-10' `
-        --resource-group $rg2 `
-        --template-file '../infra/bicep/03.- virtual machine/simple-vm-linux-ubuntu.bicep' `
-        --parameters pVmSize='Standard_A1_v2' `
-                        pProject=$Project `
-                            pUserName='azureuser' `
-                                pPassword=$pass `
-                                    pNicName=$outNicName `
+                        --template-file '../infra/bicep/02.- network/network-interface-nic.bicep' `
+                        --parameters pVmName=$vmrg2 `
                                         pLocation='eastus2' `
-                                            pVmName=$vmrg2
+                                            pSubnetId=$subnetID `
+                                                pProject=$Project `
+                        --query properties.outputs.nicName.value `
+                        -o tsv
+        )
 
+        Write-Host "Second VM - NIC: $outNicName" -BackgroundColor Green
+    }
+    catch {
+        if($_.Exception.Message -like "*PolicyViolation*"){
+            Write-Host "Can't deploy the nic on resource group ($rg2) .Deployment blocked by 'Deny location' policy as expected." -BackgroundColor Yellow}
+    }
+
+    try {
+        az deployment group create `
+            --name '00002-rg2-vm2-linux-Deployment-10' `
+            --resource-group $rg2 `
+            --template-file '../infra/bicep/03.- virtual machine/simple-vm-linux-ubuntu.bicep' `
+            --parameters pVmSize='Standard_A1_v2' `
+                            pProject=$Project `
+                                pUserName='azureuser' `
+                                    pPassword=$pass `
+                                        pNicName=$outNicName `
+                                            pLocation='eastus2' `
+                                                pVmName=$vmrg2
+    }
+    catch {
+        if($_.Exception.Message -like "*PolicyViolation*"){
+            Write-Host "Can't deploy the vdi on resource group ($rg2) .Deployment blocked by 'Deny location' policy as expected." -BackgroundColor Yellow}
+    }
 }
 catch {
    if ($bstr) { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr) }
