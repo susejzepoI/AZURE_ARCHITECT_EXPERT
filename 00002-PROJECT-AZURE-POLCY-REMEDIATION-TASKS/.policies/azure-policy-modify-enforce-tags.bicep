@@ -8,7 +8,7 @@ param pVersion              string = '1.0.0'
 @allowed(['Project','Environment','Product','Release'])
 param pTagName        string = 'Project'
 
-@minLength(5)
+@minLength(2)
 @maxLength(20)
 param pTagValue       string = 'az305'
 
