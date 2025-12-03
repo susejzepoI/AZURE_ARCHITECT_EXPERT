@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      08-05-2025
-#Modified date:     12-01-2025
+#Modified date:     12-03-2025
 
 [CmdletBinding()]
 param (
@@ -296,7 +296,7 @@ try {
                                                 pVmName=$vmrg2
     }
     catch {
-        if($_.Exception.Message -like "*PolicyViolation*"){
+        if($_.Exception.Message -like "*policy violation*"){
             Write-Host "Can't deploy the vdi on resource group ($rg2) .Deployment blocked by 'Deny location' policy as expected." -BackgroundColor Yellow}
     }
 }
