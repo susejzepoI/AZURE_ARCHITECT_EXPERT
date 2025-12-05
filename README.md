@@ -8,8 +8,9 @@ LERN        :   https://learn.microsoft.com/es-es/users/JessMiguelLopezmesia-526
 DESCRIPTION
 ---------------------------------------
 
-The purpose of this repository is to build projects to practice for the AZ-305 and AZ-104 certification exams.
-All examples in this repository are for study purposes only. Each project uses Bicep, ARM templates or Azure CLI to define the architecture as code.
+The purpose of this repository is to build projects for practicing the AZ-305 and AZ-104 certification exams.
+
+All examples in this repository are for study purposes only. Each project uses Bicep, ARM templates, or Azure CLI to define the architecture as code.
 
 ---------------------------------------
 ---------------------------------------
