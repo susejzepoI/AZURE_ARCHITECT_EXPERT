@@ -1,4 +1,4 @@
-## What is repository about?
+## What is the repository about?
 This repository contains a collection of mini-projects used to explore and test various Azure deployments using Bicep and Azure CLI. Its main purpose is to help me understand the differences between Azure services, as well as how to manage and implement them using CLI commands.
 Additionally, this repository serves as a practice environment for preparing for the [AZ-305](https://learn.microsoft.com/en-us/credentials/certifications/exams/az-305/) and [AZ-104](https://learn.microsoft.com/en-us/credentials/certifications/azure-administrator/?practice-assessment-type=certification) certification exams.
 
