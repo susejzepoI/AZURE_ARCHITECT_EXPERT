@@ -17,7 +17,9 @@ In order to execute this project you must have at least these roles:
 * Contributor
 * Resource Policy Contributor
 * User Access Administrator
+
 Or you can created a custom role with these permissions
+
 ```json
     {
         "id": "/subscriptions/24c299fa-aec1-489b-8cf2-671209727540/providers/Microsoft.Authorization/roleDefinitions/1d046d31-81e2-4fc8-bb32-c818594bb410",
