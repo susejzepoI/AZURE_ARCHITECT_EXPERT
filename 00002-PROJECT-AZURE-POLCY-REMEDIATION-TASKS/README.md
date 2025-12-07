@@ -1,5 +1,5 @@
 ## What is the project about?
-The aimd of the project 00002 is to test how Azure policies work and how can they be deployed using bicep. The *main.ps1* scripts deploys four Azure Policies across two different resources groups. It then deploys the necessary network resources to create virtual machines within these two rg.
+The aimd of the project 00002 is to test how Azure policies work and how can they be deployed using bicep. The *main.ps1* scripts deploys four Azure Policies across two different resources groups (RG). It then deploys the necessary network resources to create virtual machines within these two RG.
 
 ## Which resource groups are created in this deployment?
 * __The 00002-tags-deployifnotexists-nsg resource group__. Is used to test several Azure policies, such as the *enforce tag policy*, the *DeployIfNotExists policy* and the *modify policy* to add a network segurity group policy.
@@ -8,9 +8,9 @@ The aimd of the project 00002 is to test how Azure policies work and how can the
 
 ## Which policies are created in this deployment?
 * __The azure-policy-modify-enforce-tags.bicep policy__. Applies to all resources groups. It enforces the tag value pass through the script on all resources being to be deployed.
-* __The azure-policy-deny-location.bicep policy__. Applies only to the *00002-deny-locations* resource group. It allows deployments *only* in __westus__ or __eastus__ regions.
-* __The azure-policy-deployifnotexists.bicep policy__. Applies only to the *00002-tags-deployifnotexists-nsg* resource group. It deploys a __Network Segurity Group (NSG)__ if one does not exists.
-* __The azure-policy-modify-nic-to-add-nsg.bicep policy__. Applies only to the *00002-tags-deployifnotexists-nsg* resource group. It modifies the network interface deployed with the virtual machine to add a references to the NSG previously created.
+* __The azure-policy-deny-location.bicep policy__. Applies only to the *00002-deny-locations* RG. It allows deployments *only* in __westus__ or __eastus__ regions.
+* __The azure-policy-deployifnotexists.bicep policy__. Applies only to the *00002-tags-deployifnotexists-nsg* RG. It deploys a __Network Segurity Group (NSG)__ if one does not exists.
+* __The azure-policy-modify-nic-to-add-nsg.bicep policy__. Applies only to the *00002-tags-deployifnotexists-nsg* RG. It modifies the network interface deployed with the virtual machine to add a references to the NSG previously created.
 
 ## Which roles or permissions do you need?
 In order to execute this project, you must have at least the following roles:
