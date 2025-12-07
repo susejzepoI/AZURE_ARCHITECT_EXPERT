@@ -4,6 +4,8 @@ Additionally, this repository serves as a practice environment for preparing for
 
 ## Project structure
 Below, I shown the structure of the current repository:
+
+```md
 .
 ├── AZURE_ARCHITECT_EXPERT
 │   ├── .github             # GitHub Actions
@@ -16,6 +18,7 @@ Below, I shown the structure of the current repository:
 └── infra
     ├── azure CLI           # Reutilizable azure cli templates
     └── bicep               # Reutilizable bicep templates
+```md
 
 **NOTE:** For additional details on each sub-project, please review the README file located in each folder.
 
@@ -42,7 +45,7 @@ cd .\00002-PROJECT-AZURE-POLCY-REMEDIATION-TASKS\
 **IMPORTANT:** The main PowerShell scripts currently do not run unless you execute them from within the sub-project folder, as shown in the example above.
 
 ## Contributing
-Contributions are welcome!.
+Contributions are welcome!. Just send a PR.
 
 ## Credits
 This repository was initially created by [Jesus Lopez](https://www.linkedin.com/in/susejzepol/). Its purpose is to support learning and hands-on practice for the [AZ-305](https://learn.microsoft.com/en-us/credentials/certifications/exams/az-305/) and [AZ-104](https://learn.microsoft.com/en-us/credentials/certifications/azure-administrator/?practice-assessment-type=certification) certification exams, as well as to explore various Azure technologies.
