@@ -18,7 +18,7 @@ Below, I shown the structure of the current repository:
 └── infra
     ├── azure CLI           # Reutilizable azure cli templates
     └── bicep               # Reutilizable bicep templates
-```md
+```
 
 **NOTE:** For additional details on each sub-project, please review the README file located in each folder.
 
