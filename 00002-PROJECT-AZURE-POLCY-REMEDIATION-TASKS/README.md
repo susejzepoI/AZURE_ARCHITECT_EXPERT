@@ -1,24 +1,24 @@
 ## What is the project about?
-The aimd of the project 00002 is to test how Azure policies works and how can they be deployed using bicep. The *main.ps1* deploys four azure policies across two different resources groups. Then it deploys network resources to implement virtual machines within these two groups.
+The aimd of the project 00002 is to test how Azure policies work and how can they be deployed using bicep. The *main.ps1* scripts deploys four Azure Policies across two different resources groups. It then deploys the necessary network resources to create virtual machines within these two rg.
 
 ## Which resource groups are created in this deployment?
-* The resource group *00002-tags-deployifnotexists-nsg*. The main purpose for this rg is to test different azure policies include the enforce tag policy, the deploy if not exists policy and thhe modify to add a network segurity group policy.
+* __The 00002-tags-deployifnotexists-nsg resource group__. Is used to test several Azure policies, such as the *enforce tag policy*, the *DeployIfNotExists policy* and the *modify policy* to add a network segurity group policy.
 
-* The resource group *00002-deny-locations*. The main purpose for this rg is to test how the deny location policy works when a deployment tries to deploy resources in denied locations.
+* __The 00002-deny-locations resource group__. Is used to test how the Deny location behaves when a deployment attempts to create a resource in restricted locations.
 
 ## Which policies are created in this deployment?
-* Policy *azure-policy-modify-enforce-tags.bicep*. Applies to all resources groups. It enforce the tag value pass throw the script in all the resources being to be deployed.
-* Policy *azure-policy-deny-location.bicep*. Applies only to the *00002-deny-locations* resource group. It only allows deployments in westus or eastus regions.
-* Policy *azure-policy-deployifnotexists.bicep*. Applies only to the *00002-tags-deployifnotexists-nsg* resource group. It deploys a network segurity group if not exists.
-* Policy *azure-policy-modify-nic-to-add-nsg.bicep*. Applies only to the *00002-tags-deployifnotexists-nsg* resource group. It modifies the current network interface deployed with the virtual machine to add a references to the new network segurity group created before.
+* __The azure-policy-modify-enforce-tags.bicep policy__. Applies to all resources groups. It enforces the tag value pass through the script on all resources being to be deployed.
+* __The azure-policy-deny-location.bicep policy__. Applies only to the *00002-deny-locations* resource group. It allows deployments *only* in __westus__ or __eastus__ regions.
+* __The azure-policy-deployifnotexists.bicep policy__. Applies only to the *00002-tags-deployifnotexists-nsg* resource group. It deploys a __Network Segurity Group (NSG)__ if one does not exists.
+* __The azure-policy-modify-nic-to-add-nsg.bicep policy__. Applies only to the *00002-tags-deployifnotexists-nsg* resource group. It modifies the network interface deployed with the virtual machine to add a references to the NSG previously created.
 
 ## Which roles or permissions do you need?
-In order to execute this project you must have at least these roles:
+In order to execute this project, you must have at least the following roles:
 * Contributor
 * Resource Policy Contributor
 * User Access Administrator
 
-Or you can created a custom role with these permissions
+Alternatively, you can create a custom role that includes these permissions:
 
 ```json
     {
