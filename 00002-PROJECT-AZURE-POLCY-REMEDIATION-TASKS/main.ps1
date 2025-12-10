@@ -299,8 +299,10 @@ try {
         if($_.Exception.Message -like "*policy violation*"){
             Write-Host "Can't deploy the vdi on resource group ($rg2) .Deployment blocked by 'Deny location' policy as expected." -BackgroundColor Yellow}
     }
+    exit 0
 }
 catch {
    if ($bstr) { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr) }
     $Pass = $null
+    exit 1
 }
