@@ -116,104 +116,108 @@ try {
     ###########################################################################
     #JLopez-20251006: Deploying the azure policies for the first resource group.
     ###########################################################################
+    try{
+        #JLopez-20250823: Deploying the azure policy definition.
+        az deployment sub create `
+            --name '00002-rg1-policy1-Deployment-4-1' `
+            --location 'westus' `
+            --template-file './.policies/azure-policy-modify-enforce-tags.bicep' `
+            --subscription $pSubscriptionName `
+            --parameters pName=$PolicyName1 `
+                            pCategory='Tags' `
+                                pVersion=$policyVersion `
+                                    pTagName=$ProjectTagName `
+                                        pTagValue=$ProjectTagValue
 
-    #JLopez-20250823: Deploying the azure policy definition.
-    az deployment sub create `
-        --name '00002-rg1-policy1-Deployment-4-1' `
-        --location 'westus' `
-        --template-file './.policies/azure-policy-modify-enforce-tags.bicep' `
-        --subscription $pSubscriptionName `
-        --parameters pName=$PolicyName1 `
-                        pCategory='Tags' `
-                            pVersion=$policyVersion `
-                                pTagName=$ProjectTagName `
-                                    pTagValue=$ProjectTagValue
+        #JLopez-20250919: Assigiment the policy definition.
+        $outPolicyAssignmentId = $(
+                                    az deployment group create `
+                                        --name '00002-rg1-policy1-Assigment-4-2' `
+                                        --template-file './.policies/azure-policy-modify-enforce-tags-assignment.bicep' `
+                                        --resource-group $rg1 `
+                                        --parameters pName=$PolicyName1 `
+                                                        pLocation='westus' `
+                                        --query properties.outputs.policyAssignmentId.value `
+                                        -o tsv
+                                )
 
-    #JLopez-20250919: Assigiment the policy definition.
-    $outPolicyAssignmentId = $(
-                                az deployment group create `
-                                    --name '00002-rg1-policy1-Assigment-4-2' `
-                                    --template-file './.policies/azure-policy-modify-enforce-tags-assignment.bicep' `
-                                    --resource-group $rg1 `
-                                    --parameters pName=$PolicyName1 `
-                                                    pLocation='westus' `
-                                    --query properties.outputs.policyAssignmentId.value `
-                                    -o tsv
-                            )
+        #JLopez-20251027: Adding the tag contributor role to the policy assignment.
+        az role assignment create `
+            --assignee-object-id $outPolicyAssignmentId `
+            --assignee-principal-type 'ServicePrincipal' `
+            --role 'Tag Contributor' `
+            --scope $outRg1Id
 
-    #JLopez-20251027: Adding the tag contributor role to the policy assignment.
-    az role assignment create `
-        --assignee-object-id $outPolicyAssignmentId `
-        --assignee-principal-type 'ServicePrincipal' `
-        --role 'Tag Contributor' `
-        --scope $outRg1Id
+        #JLopez-20251027: Creating a remediation task for the policy definition enforce-tags.
+        az policy remediation create `
+            --name '00002-rg1-policy1-Remediation-4-3'  `
+            --policy-assignment "Assignment-$PolicyName1" `
+            --resource-group $rg1 `
+            --resource-discovery-mode 'ReEvaluateCompliance'
 
-    #JLopez-20251027: Creating a remediation task for the policy definition enforce-tags.
-    az policy remediation create `
-        --name '00002-rg1-policy1-Remediation-4-3'  `
-        --policy-assignment "Assignment-$PolicyName1" `
-        --resource-group $rg1 `
-        --resource-discovery-mode 'ReEvaluateCompliance'
+        #JLopez-20251006: First policy definition, deployifnotexists nsg.
+        Write-Host "first VM - NIC: $outNicName" -BackgroundColor Green
+        $outNsgName = $(
+                        az deployment sub create `
+                            --name '00002-rg1-policy2-Deployment-5-1' `
+                            --location 'westus' `
+                            --template-file './.policies/azure-policy-deployifnotexists.bicep' `
+                            --subscription $pSubscriptionName `
+                            --parameters pName=$PolicyName2 `
+                                            pCategory='Network' `
+                                                pVersion=$policyVersion `
+                                                    pRGName=$rg1 `
+                                                        pNsgName=$NsgName `
+                            --query properties.outputs.nsgName.value `
+                            -o tsv
+                        )
 
-    #JLopez-20251006: First policy definition, deployifnotexists nsg.
-    Write-Host "first VM - NIC: $outNicName" -BackgroundColor Green
-    $outNsgName = $(
-                    az deployment sub create `
-                        --name '00002-rg1-policy2-Deployment-5-1' `
-                        --location 'westus' `
-                        --template-file './.policies/azure-policy-deployifnotexists.bicep' `
-                        --subscription $pSubscriptionName `
-                        --parameters pName=$PolicyName2 `
-                                        pCategory='Network' `
-                                            pVersion=$policyVersion `
-                                                pRGName=$rg1 `
-                                                    pNsgName=$NsgName `
-                        --query properties.outputs.nsgName.value `
-                        -o tsv
-                    )
+        #JLopez-20250919: Assigiment the policy definition.
+        az deployment group create `
+            --name '00002-rg1-policy2-Assigment-5-2' `
+            --template-file './.policies/azure-policy-deployifnotexists-assignment.bicep' `
+            --resource-group $rg1 `
+            --parameters pName=$PolicyName2
 
-    #JLopez-20250919: Assigiment the policy definition.
-    az deployment group create `
-        --name '00002-rg1-policy2-Assigment-5-2' `
-        --template-file './.policies/azure-policy-deployifnotexists-assignment.bicep' `
-        --resource-group $rg1 `
-        --parameters pName=$PolicyName2
+        #JLopez-20250926: 
+        # Creating a remediation task for the policy definition deployifnotexists.
+        # The deployifnotexists effect doesn't automatically remediate existing non-compliant resources.
+        # we need to create a remediation task to trigger the deployment.
+        # After the command runs, you can check progress: az policy remediation list --resource-group $rg1 --output table
+        az policy remediation create `
+            --name '00002-rg1-policy2-Remediation-5-3'  `
+            --policy-assignment "Assignment-$PolicyName2" `
+            --resource-group $rg1 `
+            --resource-discovery-mode 'ReEvaluateCompliance'
 
-    #JLopez-20250926: 
-    # Creating a remediation task for the policy definition deployifnotexists.
-    # The deployifnotexists effect doesn't automatically remediate existing non-compliant resources.
-    # we need to create a remediation task to trigger the deployment.
-    # After the command runs, you can check progress: az policy remediation list --resource-group $rg1 --output table
-    az policy remediation create `
-        --name '00002-rg1-policy2-Remediation-5-3'  `
-        --policy-assignment "Assignment-$PolicyName2" `
-        --resource-group $rg1 `
-        --resource-discovery-mode 'ReEvaluateCompliance'
+        #JLopez-20251006: Second policy definition, modify to link the nic to nsg.
+        az deployment sub create `
+            --name '00002-rg1-policy3-Deployment-6-1' `
+            --location 'westus' `
+            --template-file './.policies/azure-policy-modify-nic-to-add-nsg.bicep' `
+            --subscription $pSubscriptionName `
+            --parameters pName=$PolicyName3 `
+                            pCategory='Network' `
+                                pVersion=$policyVersion `
+                                    pRGName=$rg1 `
+                                        pNsgName=$outNsgName `
+                                            pNicName=$outNicName
 
-    #JLopez-20251006: Second policy definition, modify to link the nic to nsg.
-    az deployment sub create `
-        --name '00002-rg1-policy3-Deployment-6-1' `
-        --location 'westus' `
-        --template-file './.policies/azure-policy-modify-nic-to-add-nsg.bicep' `
-        --subscription $pSubscriptionName `
-        --parameters pName=$PolicyName3 `
-                        pCategory='Network' `
-                            pVersion=$policyVersion `
-                                pRGName=$rg1 `
-                                    pNsgName=$outNsgName `
-                                        pNicName=$outNicName
+        az deployment group create `
+            --name '00002-rg1-policy3-Assigment-6-2' `
+            --template-file './.policies/azure-policy-modify-nic-to-add-nsg-assignment.bicep' `
+            --resource-group $rg1 `
+            --parameters pName=$PolicyName3
 
-    az deployment group create `
-        --name '00002-rg1-policy3-Assigment-6-2' `
-        --template-file './.policies/azure-policy-modify-nic-to-add-nsg-assignment.bicep' `
-        --resource-group $rg1 `
-        --parameters pName=$PolicyName3
-
-    az policy remediation create `
-        --name '00002-rg1-policy3-Remediation-6-3'  `
-        --policy-assignment "Assignment-$PolicyName3" `
-        --resource-group $rg1 `
-        --resource-discovery-mode 'ReEvaluateCompliance'
+        az policy remediation create `
+            --name '00002-rg1-policy3-Remediation-6-3'  `
+            --policy-assignment "Assignment-$PolicyName3" `
+            --resource-group $rg1 `
+            --resource-discovery-mode 'ReEvaluateCompliance'
+    }catch{
+        Write-Host "Can't deploy the policies: $($_.Exception.Message)" -BackgroundColor Red
+        exit 1
+    }
 
     ###########################################################################
     #JLopez-20251006: RG2.
