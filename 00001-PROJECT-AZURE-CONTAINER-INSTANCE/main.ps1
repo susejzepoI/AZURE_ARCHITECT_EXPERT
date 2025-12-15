@@ -12,15 +12,18 @@ param(
 )
 
 #JLopez-20250823: Defining the resource groups to be created.
+$pSubscriptionName              = $SubscriptionName
 $pProjectPrefix                 = $ProjectPrefix
 $pResourceGroupName             = "$($pProjectPrefix)-RG1-ACI"
+
 Write-Host "Starting deployment for project: $pProjectPrefix" -BackgroundColor Green
+Write-Host "Using subscription: $pSubscriptionName" -BackgroundColor Green
+
 Write-Host "Deploying the resource group: $pResourceGroupName" -BackgroundColor Green
-
-
+$DeploymentName = "$($ProjectPrefix)-rg1-Deployment-1"
 az deployment sub create `
-    --name '$ProjectPrefix-rg1-Deployment-1' `
+    --name $DeploymentName `
     --location 'chilecentral' `
     --template-file '../infra/bicep/01.- resource-group/resource-group.bicep' `
-    --parameters pName=$rg1 pLocation='chilecentral' `
+    --parameters pName=$pResourceGroupName pLocation='chilecentral' `
     --subscription $pSubscriptionName
