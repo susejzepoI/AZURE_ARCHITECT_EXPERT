@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/My-Hello-world-api/My_Hello_World_Api/My_Hello_World_Api.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "${workspaceFolder}/00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/My-Hello-world-api/My_Hello_World_Api/My_Hello_World_Api.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/My-Hello-world-api/My_Hello_World_Api/My_Hello_World_Api.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}

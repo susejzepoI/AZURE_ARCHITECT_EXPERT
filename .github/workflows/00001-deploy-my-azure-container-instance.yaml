@@ -1,4 +1,4 @@
-name: 00001-deploy-my-azure-container-instance
+name: 00001-deploy-hello-world-azure-container-instance
 
 # Controls when the workflow will run
 on:

@@ -1,0 +1,32 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE", "00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE", "{F5A747B8-1FD6-B4FA-FC61-3346896621CC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "My-Hello-world-api", "My-Hello-world-api", "{9893493B-B96D-B1EE-34CA-D8CDD711B6F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "My_Hello_World_Api", "00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE\My-Hello-world-api\My_Hello_World_Api\My_Hello_World_Api.csproj", "{2245C179-AD63-109B-4F09-BC83F33E8306}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2245C179-AD63-109B-4F09-BC83F33E8306}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2245C179-AD63-109B-4F09-BC83F33E8306}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2245C179-AD63-109B-4F09-BC83F33E8306}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2245C179-AD63-109B-4F09-BC83F33E8306}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9893493B-B96D-B1EE-34CA-D8CDD711B6F1} = {F5A747B8-1FD6-B4FA-FC61-3346896621CC}
+		{2245C179-AD63-109B-4F09-BC83F33E8306} = {9893493B-B96D-B1EE-34CA-D8CDD711B6F1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {24413F66-6B5F-4CE0-8B27-C1B0D09FC897}
+	EndGlobalSection
+EndGlobal
