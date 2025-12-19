@@ -1,1 +1,22 @@
+# Ignore build directories
+/bin/
+/obj/
+
+# Ignore user-specific files
+*.user
+*.suo
+
+# Ignore configuration files
+appsettings.Development.json
+
+# Ignore temporary files
+*.tmp
+*.log
+
+# Ignore Visual Studio specific files
+.vs/
+
+# Ignore Docker files if not needed
+Dockerfile
+
 00002-PROJECT-AZURE-POLCY-REMEDIATION-TASKS/.policies/azure-policy-deployifnotexists.bicep
