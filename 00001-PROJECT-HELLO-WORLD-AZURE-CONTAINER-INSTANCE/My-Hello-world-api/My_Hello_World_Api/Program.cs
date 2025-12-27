@@ -16,7 +16,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/", () => "Hello world from my Azure Container Instance!.");
+app.MapGet("/", 
+        () =>
+        {
+            var pEnvironmentVariable = Environment.GetEnvironmentVariable("APP_ENVIRONMENT") ?? "Not Set";
+            return "Hello world from my Azure Container Instance (" + pEnvironmentVariable +")!.";
+        }
+        
+        );
 
 app.MapGet(
     "/info", () =>
