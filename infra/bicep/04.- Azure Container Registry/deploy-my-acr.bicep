@@ -1,6 +1,8 @@
 param acrName       string 
 
 var pNewOrExisting = acrName == '' ? 'New' : 'Existing'
+
+//JLopez-20251227: 'pACRName' must be unique
 var pACRName = acrName == '' ? 'myacr${uniqueString(resourceGroup().id)}' : acrName
 /*
   JLopez-20251222: Examples and documentation about Azure Container Registry (ACR) using Bicep.

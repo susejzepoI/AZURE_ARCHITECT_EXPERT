@@ -1,14 +1,16 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      06-12-2025
-#Modified date:     26-12-2025
+#Modified date:     27-12-2025
 
 [cmdletBinding()]
 param(
     [parameter(HelpMessage='Name of the subscription to use in the script.')]
     [string]$SubscriptionName      = 'Suscripción de Plataformas de MSDN',
     [parameter(Mandatory=$true)]
-    [string]$ProjectPrefix         = '00001'   
+    [string]$ProjectPrefix,   
+    [parameter(Mandatory=$true)]
+    [string]$ImageName
 )
 
 #JLopez-20251222: Defining the resource groups to be created.
@@ -17,6 +19,9 @@ $pProjectPrefix                 = $ProjectPrefix
 $pResourceGroupName             = "$($pProjectPrefix)-RG1-ACI"
 #JLopez-20251222: This resource group will contain shared resources for all subprojects.
 $pResourceGroupInfraName        = "$($pProjectPrefix)-RG-INFRA"
+#JLopez-202251226: This is the image name that you built previously in your local machine.
+#                  To more information about how to build the image, please check the README.md file for this project.
+$pImage                         = $ImageName 
 
 Write-Host "Starting deployment for project: $pProjectPrefix" -BackgroundColor Green
 Write-Host "Using subscription: $pSubscriptionName" -BackgroundColor Green
@@ -38,7 +43,7 @@ az deployment sub create `
     --parameters pName=$pResourceGroupName pLocation='chilecentral' `
     --subscription $pSubscriptionName
 
-$MyNameACR = $(
+$pMyNameACR = $(
         az acr list `
             --resource-group $rg `
             --query "[?contains(name, 'myacr')].name" `
@@ -50,5 +55,12 @@ az deployment group create `
     --name "$($ProjectPrefix)-acr-infra-deployment-1" `
     --resource-group $pResourceGroupInfraName `
     --template-file '../infra/bicep/04.- Azure Container Registry/deploy-my-acr.bicep' `
-    --parameters acrName=$MyNameACR `
-    --subscription $pSubscriptionName --debug
+    --parameters acrName=$pMyNameACR `
+    --subscription $pSubscriptionName
+
+$pAcr_login  = $(az acr show --name $MyNameACR --resource-group $pResourceGroupInfraName --query "loginServer" -o tsv)
+$pFull_image = $pAcr_login + "/" + $pImage
+
+Write-Host "Pushing the docker image to the Container Registry" -BackgroundColor Green
+docker tag $pImage $pFull_image
+docker push $pFull_image
