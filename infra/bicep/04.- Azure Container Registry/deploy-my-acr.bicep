@@ -20,4 +20,7 @@ resource MyNewACR 'Microsoft.ContainerRegistry/registries@2025-11-01' = if (pNew
   sku: {
       name: 'Standard'
     }
+    properties: {
+      adminUserEnabled: true
+    }
 }

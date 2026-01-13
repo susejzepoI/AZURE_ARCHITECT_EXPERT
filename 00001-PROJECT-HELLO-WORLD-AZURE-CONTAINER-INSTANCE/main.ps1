@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      06-12-2025
-#Modified date:     27-12-2025
+#Modified date:     12-01-2026
 
 [cmdletBinding()]
 param(
@@ -18,7 +18,7 @@ $pSubscriptionName              = $SubscriptionName
 $pProjectPrefix                 = $ProjectPrefix
 $pResourceGroupName             = "$($pProjectPrefix)-RG1-ACI"
 #JLopez-20251222: This resource group will contain shared resources for all subprojects.
-$pResourceGroupInfraName        = "$($pProjectPrefix)-RG-INFRA"
+$pResourceGroupInfraName        = "RG-INFRA"
 #JLopez-202251226: This is the image name that you built previously in your local machine.
 #                  To more information about how to build the image, please check the README.md file for this project.
 $pImage                         = $ImageName 
@@ -45,7 +45,7 @@ az deployment sub create `
 
 $pMyNameACR = $(
         az acr list `
-            --resource-group $rg `
+            --resource-group $pResourceGroupInfraName `
             --query "[?contains(name, 'myacr')].name" `
             -o tsv
 )
@@ -58,9 +58,11 @@ az deployment group create `
     --parameters acrName=$pMyNameACR `
     --subscription $pSubscriptionName
 
-$pAcr_login  = $(az acr show --name $MyNameACR --resource-group $pResourceGroupInfraName --query "loginServer" -o tsv)
-$pFull_image = $pAcr_login + "/" + $pImage
+Write-Host "Logging in to the Azure Container Registry" -BackgroundColor Green
+$pAcr_login  = $(az acr show --name $pMyNameACR --resource-group $pResourceGroupInfraName --query "loginServer" -o tsv)
+az acr login --name $pAcr_login --resource-group $pResourceGroupInfraName
 
 Write-Host "Pushing the docker image to the Container Registry" -BackgroundColor Green
+$pFull_image = $pAcr_login + "/" + $pImage
 docker tag $pImage $pFull_image
 docker push $pFull_image
