@@ -1,4 +1,4 @@
-param acrName       string 
+param acrName string 
 
 var pNewOrExisting = acrName == '' ? 'New' : 'Existing'
 

@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      06-12-2025
-#Modified date:     12-01-2026
+#Modified date:     13-01-2026
 
 [cmdletBinding()]
 param(
@@ -52,7 +52,7 @@ $pMyNameACR = $(
 
 Write-Host "Deploying the Azure Container Registry" -BackgroundColor Green
 az deployment group create `
-    --name "$($ProjectPrefix)-acr-infra-deployment-1" `
+    --name "$($ProjectPrefix)-acr-infra-deployment-2" `
     --resource-group $pResourceGroupInfraName `
     --template-file '../infra/bicep/04.- Azure Container Registry/deploy-my-acr.bicep' `
     --parameters acrName=$pMyNameACR `
@@ -66,3 +66,18 @@ Write-Host "Pushing the docker image to the Container Registry" -BackgroundColor
 $pFull_image = $pAcr_login + "/" + $pImage
 docker tag $pImage $pFull_image
 docker push $pFull_image
+
+Write-Host "Getting the ACR credentials" -BackgroundColor Green
+$acrUser = (az acr credential show --name $pMyNameACR --resource-group $pResourceGroupInfraName --query "username" -o tsv)
+$acrPass = (az acr credential show --name $pMyNameACR --resource-group $pResourceGroupInfraName --query "passwords[0].value" -o tsv)
+
+Write-Host "Deploying the Azure Container Instance" -BackgroundColor Green
+az deployment group create `
+    --name "$($ProjectPrefix)-aci-deployment-3" `
+    --resource-group $pResourceGroupName `
+    --template-file '../infra/bicep/05.- Azure Container Instance/simple-aci.bicep' `
+    --parameters acrLoginServer=$pAcr_login `
+        image=$pFull_image `
+            acrUser=$acrUser `
+                acrPassword=$acrPass `
+    --subscription $pSubscriptionName

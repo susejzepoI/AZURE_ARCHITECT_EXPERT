@@ -1,0 +1,35 @@
+param image string
+param acrLoginServer string
+param acrUser string
+param acrPassword string
+
+resource myACI 'Microsoft.ContainerInstance/containerGroups@2025-09-01' = {
+  name: 'myaci-${uniqueString(resourceGroup().id)}'
+  location: resourceGroup().location
+  properties: {
+    containers: [
+      {
+        name: 'mycontainer'
+        properties: {
+          image: image
+          resources: {
+            requests: {
+              cpu: 1
+              memoryInGB: 2
+            }
+          }
+          environmentVariables: []
+        }
+      }
+    ]
+    osType: 'Linux'
+    imageRegistryCredentials: [
+      {
+        server: acrLoginServer
+        username: acrUser
+        password: acrPassword
+      }
+    ]
+    restartPolicy: 'Always'
+  }
+}
