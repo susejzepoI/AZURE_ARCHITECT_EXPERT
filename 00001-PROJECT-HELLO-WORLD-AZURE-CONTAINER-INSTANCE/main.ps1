@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      06-12-2025
-#Modified date:     13-01-2026
+#Modified date:     14-01-2026
 
 [cmdletBinding()]
 param(
@@ -43,6 +43,8 @@ az deployment sub create `
     --parameters pName=$pResourceGroupName pLocation='chilecentral' `
     --subscription $pSubscriptionName
 
+Write-Host "Deploying the Azure Container Registry" -BackgroundColor Green
+
 $pMyNameACR = $(
         az acr list `
             --resource-group $pResourceGroupInfraName `
@@ -50,13 +52,15 @@ $pMyNameACR = $(
             -o tsv
 )
 
-Write-Host "Deploying the Azure Container Registry" -BackgroundColor Green
-az deployment group create `
+$pMyNameACR = $(
+    az deployment group create `
     --name "$($ProjectPrefix)-acr-infra-deployment-2" `
     --resource-group $pResourceGroupInfraName `
     --template-file '../infra/bicep/04.- Azure Container Registry/deploy-my-acr.bicep' `
     --parameters acrName=$pMyNameACR `
-    --subscription $pSubscriptionName
+    --subscription $pSubscriptionName `
+    --query properties.outputs.acrName.value
+)
 
 Write-Host "Logging in to the Azure Container Registry" -BackgroundColor Green
 $pAcr_login  = $(az acr show --name $pMyNameACR --resource-group $pResourceGroupInfraName --query "loginServer" -o tsv)
