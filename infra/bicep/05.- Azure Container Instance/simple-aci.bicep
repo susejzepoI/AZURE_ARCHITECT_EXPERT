@@ -4,6 +4,8 @@ param acrUser string
 param acrPassword string
 param envAppEnvironment string
 
+// JLopez-20260109: Documentation: https://github.com/Azure/bicep-registry-modules/tree/main/avm/res/container-instance/container-group
+
 resource myACI 'Microsoft.ContainerInstance/containerGroups@2025-09-01' = {
   name: 'myaci-${uniqueString(resourceGroup().id)}'
   location: resourceGroup().location
@@ -40,5 +42,16 @@ resource myACI 'Microsoft.ContainerInstance/containerGroups@2025-09-01' = {
       }
     ]
     restartPolicy: 'Always'
+    ipAddress: {
+      type: 'Public'
+      ports: [
+        {
+          port: 8080
+          protocol: 'TCP'
+        }
+      ]
+    }
   }
 }
+
+output containerIP string = myACI.properties.ipAddress.ip

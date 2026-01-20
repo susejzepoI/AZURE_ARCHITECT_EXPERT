@@ -78,13 +78,19 @@ $acrUser = (az acr credential show --name $pMyNameACR --resource-group $pResourc
 $acrPass = (az acr credential show --name $pMyNameACR --resource-group $pResourceGroupInfraName --query "passwords[0].value" -o tsv)
 
 Write-Host "Deploying the Azure Container Instance" -BackgroundColor Green
-az deployment group create `
-    --name "$($ProjectPrefix)-aci-deployment-3" `
-    --resource-group $pResourceGroupName `
-    --template-file '../infra/bicep/05.- Azure Container Instance/simple-aci.bicep' `
-    --parameters acrLoginServer=$pAcr_login `
-        image=$pFull_image `
-            acrUser=$acrUser `
-                acrPassword=$acrPass `
-                    envAppEnvironment=$Environment `
-    --subscription $pSubscriptionName
+$container_ip = $(
+            az deployment group create `
+                --name "$($ProjectPrefix)-aci-deployment-3" `
+                --resource-group $pResourceGroupName `
+                --template-file '../infra/bicep/05.- Azure Container Instance/simple-aci.bicep' `
+                --parameters acrLoginServer=$pAcr_login `
+                    image=$pFull_image `
+                        acrUser=$acrUser `
+                            acrPassword=$acrPass `
+                                envAppEnvironment=$Environment `
+                --subscription $pSubscriptionName `
+                --query properties.outputs.containerIP.value
+)
+Write-Host "API Information" -BackgroundColor Green
+write-Host "API URL: http://$($container_ip):8080/"
+write-Host "INFO URL: http://$($container_ip):8080/info"
