@@ -2,6 +2,7 @@ param image string
 param acrLoginServer string
 param acrUser string
 param acrPassword string
+param envAppEnvironment string
 
 resource myACI 'Microsoft.ContainerInstance/containerGroups@2025-09-01' = {
   name: 'myaci-${uniqueString(resourceGroup().id)}'
@@ -18,7 +19,15 @@ resource myACI 'Microsoft.ContainerInstance/containerGroups@2025-09-01' = {
               memoryInGB: 2
             }
           }
-          environmentVariables: []
+          environmentVariables: [
+            {name: 'APP_ENVIRONMENT', value: envAppEnvironment}
+          ]
+          ports: [
+            {
+              port: 8080
+              protocol: 'TCP'
+            }
+          ]
         }
       }
     ]

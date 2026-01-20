@@ -1,16 +1,18 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      06-12-2025
-#Modified date:     14-01-2026
+#Modified date:     19-01-2026
 
 [cmdletBinding()]
 param(
     [parameter(HelpMessage='Name of the subscription to use in the script.')]
-    [string]$SubscriptionName      = 'Suscripción de Plataformas de MSDN',
+    [string]$SubscriptionName = 'Suscripción de Plataformas de MSDN',
     [parameter(Mandatory=$true)]
     [string]$ProjectPrefix,   
     [parameter(Mandatory=$true)]
-    [string]$ImageName
+    [string]$ImageName,
+    [parameter()]
+    [string]$Environment = 'Development'
 )
 
 #JLopez-20251222: Defining the resource groups to be created.
@@ -84,4 +86,5 @@ az deployment group create `
         image=$pFull_image `
             acrUser=$acrUser `
                 acrPassword=$acrPass `
+                    envAppEnvironment=$Environment `
     --subscription $pSubscriptionName
