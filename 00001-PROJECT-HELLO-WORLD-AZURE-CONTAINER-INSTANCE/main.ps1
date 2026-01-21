@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      06-12-2025
-#Modified date:     19-01-2026
+#Modified date:     20-01-2026
 
 [cmdletBinding()]
 param(
@@ -68,9 +68,14 @@ Write-Host "Logging in to the Azure Container Registry" -BackgroundColor Green
 $pAcr_login  = $(az acr show --name $pMyNameACR --resource-group $pResourceGroupInfraName --query "loginServer" -o tsv)
 az acr login --name $pAcr_login --resource-group $pResourceGroupInfraName
 
+Write-host "Building the docker image: $pImage" -BackgroundColor Green
+docker build -t $pImage --file './My-Hello-world-api/My_Hello_World_Api/Dockerfile' './My-Hello-world-api/My_Hello_World_Api'
+
 Write-Host "Pushing the docker image to the Container Registry" -BackgroundColor Green
 $pFull_image = $pAcr_login + "/" + $pImage
 docker tag $pImage $pFull_image
+
+write-host "Full image name: $pFull_image" -BackgroundColor Green
 docker push $pFull_image
 
 Write-Host "Getting the ACR credentials" -BackgroundColor Green
@@ -90,7 +95,8 @@ $container_ip = $(
                                 envAppEnvironment=$Environment `
                 --subscription $pSubscriptionName `
                 --query properties.outputs.containerIP.value
-)
+).trim('"')
+
 Write-Host "API Information" -BackgroundColor Green
-write-Host "API URL: http://$($container_ip):8080/"
-write-Host "INFO URL: http://$($container_ip):8080/info"
+write-Host "API URL: http://$($container_ip):8080/"  -BackgroundColor Green
+write-Host "INFO URL: http://$($container_ip):8080/Environment_information"  -BackgroundColor Green

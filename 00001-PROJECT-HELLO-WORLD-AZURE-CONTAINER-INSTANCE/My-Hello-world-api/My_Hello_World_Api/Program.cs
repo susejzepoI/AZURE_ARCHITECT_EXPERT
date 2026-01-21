@@ -26,7 +26,7 @@ app.MapGet("/",
         );
 
 app.MapGet(
-    "/info", () =>
+    "/Environment_information", () =>
     {
         var pEnvironmentVariable = Environment.GetEnvironmentVariable("APP_ENVIRONMENT") ?? "Not Set";
         return Results.Ok(

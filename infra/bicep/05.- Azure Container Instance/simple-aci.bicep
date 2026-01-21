@@ -5,14 +5,17 @@ param acrPassword string
 param envAppEnvironment string
 
 // JLopez-20260109: Documentation: https://github.com/Azure/bicep-registry-modules/tree/main/avm/res/container-instance/container-group
+var aciName = 'myaci-${uniqueString(resourceGroup().id)}'
+var containerName = 'mycontainer-${uniqueString(resourceGroup().id)}'
+
 
 resource myACI 'Microsoft.ContainerInstance/containerGroups@2025-09-01' = {
-  name: 'myaci-${uniqueString(resourceGroup().id)}'
+  name: aciName
   location: resourceGroup().location
   properties: {
     containers: [
       {
-        name: 'mycontainer'
+        name: containerName
         properties: {
           image: image
           resources: {
