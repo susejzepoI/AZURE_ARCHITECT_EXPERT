@@ -1,1 +1,18 @@
-00002-PROJECT-AZURE-POLCY-REMEDIATION-TASKS/.policies/azure-policy-deployifnotexists.bicep
+# Ignore build directories
+/bin/
+/obj/
+/00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/My-Hello-world-api/My_Hello_World_Api/bin/
+/00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/My-Hello-world-api/My_Hello_World_Api/obj/
+# Ignore user-specific files
+*.user
+*.suo
+
+# Ignore configuration files
+appsettings.Development.json
+/00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/My-Hello-world-api/My_Hello_World_Api/appsettings.Development.json
+# Ignore temporary files
+*.tmp
+*.log
+
+# Ignore Visual Studio specific files
+.vs/
