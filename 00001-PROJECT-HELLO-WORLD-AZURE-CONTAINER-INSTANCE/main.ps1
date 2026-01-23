@@ -1,14 +1,12 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      06-12-2025
-#Modified date:     20-01-2026
+#Modified date:     22-01-2026
 
 [cmdletBinding()]
 param(
     [parameter(HelpMessage='Name of the subscription to use in the script.')]
-    [string]$SubscriptionName = 'Suscripción de Plataformas de MSDN',
-    [parameter(Mandatory=$true)]
-    [string]$ProjectPrefix,   
+    [string]$SubscriptionName = 'Suscripción de Plataformas de MSDN', 
     [parameter(Mandatory=$true)]
     [string]$ImageName,
     [parameter()]
@@ -17,7 +15,7 @@ param(
 
 #JLopez-20251222: Defining the resource groups to be created.
 $pSubscriptionName              = $SubscriptionName
-$pProjectPrefix                 = $ProjectPrefix
+$pProjectPrefix                 = "00001"
 $pResourceGroupName             = "$($pProjectPrefix)-RG1-ACI"
 #JLopez-20251222: This resource group will contain shared resources for all subprojects.
 $pResourceGroupInfraName        = "RG-INFRA"
