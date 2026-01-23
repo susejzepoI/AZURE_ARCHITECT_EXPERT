@@ -70,7 +70,7 @@ No additional Azure CLI extensions are required for this project. The deployment
   - Azure Container Registry (ACR) for storing container images
   - Used across multiple projects to centralize image management
 
-#### 2. **{ProjectPrefix}-RG1-ACI**
+#### 2. **00001-RG1-ACI**
 - **Location**: Chile Central (`chilecentral`)
 - **Purpose**: Project-specific resources for the Hello World API
 - **Contains**:
@@ -81,7 +81,7 @@ No additional Azure CLI extensions are required for this project. The deployment
 
 | Resource Type | Resource Name | Resource Group | Purpose |
 |---|---|---|---|
-| Azure Container Registry | `myacr*` (auto-generated) | RG-INFRA | Stores Docker images used by all projects |
+| Azure Container Registry | Auto-generated | `RG-INFRA` | Stores Docker images used by all projects |
 | Azure Container Instance | Auto-generated | `00001-RG1-ACI` | Runs the Hello World API container |
 
 ---
@@ -147,16 +147,31 @@ Before running the deployment, ensure:
 
 1. ✅ All system requirements are installed and accessible from your terminal
 2. ✅ You are authenticated with Azure CLI:
-   ```powershell
-   az login
-   ```
-3. ✅ The correct Azure subscription is selected:
-   ```powershell
-   az account show
-   az account set --subscription "Your Subscription Name"
-   ```
 
-### Step 1: Build the Docker Image Locally (Optional)
+```powershell
+az login
+```
+3. ✅ The correct Azure subscription is selected:
+
+```powershell
+az account show
+az account set --subscription "Your Subscription Name"
+```
+
+### Step 1: Run the Main Deployment Script
+
+Navigate to the project directory and execute the deployment script:
+
+```powershell
+cd .\00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE\
+
+.\main.ps1 `
+    -ImageName "hello-world-api:v1.0" `
+    -SubscriptionName "Your Subscription Name" `
+    -Environment "Development"
+```
+
+### Step 2: Build the Docker Image Locally (Optional)
 
 To verify the application runs correctly before deploying to Azure:
 
@@ -171,27 +186,12 @@ curl http://localhost:8080
 curl http://localhost:8080/Environment_information
 ```
 
-### Step 2: Run the Main Deployment Script
-
-Navigate to the project directory and execute the deployment script:
-
-```powershell
-cd .\00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE\
-
-.\main.ps1 `
-    -ProjectPrefix "myproject01" `
-    -ImageName "hello-world-api:v1.0" `
-    -SubscriptionName "Your Subscription Name" `
-    -Environment "Development"
-```
-
 ### Required Parameters
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
-| `-ProjectPrefix` | String | ✅ Yes | — | Prefix for resource naming (e.g., `myproject01`). Used to create resource group names. |
-| `-ImageName` | String | ✅ Yes | — | Docker image name and tag (e.g., `hello-world-api:v1.0`). |
 | `-SubscriptionName` | String | ❌ No | `Suscripción de Plataformas de MSDN` | Name of the Azure subscription to deploy to. |
+| `-ImageName` | String | ✅ Yes | — | Docker image name and tag (e.g., `hello-world-api:v1.0`). |
 | `-Environment` | String | ❌ No | `Development` | Environment name passed to the container as `APP_ENVIRONMENT` variable. Options: `Development`, `Staging`, `Production`. |
 
 ### Step 3: Verify Deployment
@@ -217,9 +217,8 @@ Invoke-WebRequest -Uri "http://$containerIP:8080/Environment_information" | Conv
 ```powershell
 # Full example with custom values
 .\main.ps1 `
-    -ProjectPrefix "helloworld-prod" `
-    -ImageName "hello-world-api:1.0.0" `
     -SubscriptionName "My Production Subscription" `
+    -ImageName "hello-world-api:1.0.0" `
     -Environment "Production"
 ```
 
