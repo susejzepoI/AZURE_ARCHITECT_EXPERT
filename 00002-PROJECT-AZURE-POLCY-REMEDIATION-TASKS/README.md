@@ -1,18 +1,22 @@
-## What is the project about?
+# 00001 - Project: Azure Policy and remediation tasks
+
+## Project Overview
+
+### What is the project about?
 The aimd of the project 00002 is to test how Azure policies work and how can they be deployed using bicep. The *main.ps1* scripts deploys four Azure Policies across two different resources groups (RG). It then deploys the necessary network resources to create virtual machines within these two RG.
 
-## Which resource groups are created in this deployment?
+### Which resource groups are created in this deployment?
 * __The 00002-tags-deployifnotexists-nsg resource group__. Is used to test several Azure policies, such as the *enforce tag policy*, the *DeployIfNotExists policy* and the *modify policy* to add a network segurity group policy.
 
 * __The 00002-deny-locations resource group__. Is used to test how the Deny location behaves when a deployment attempts to create a resource in restricted locations.
 
-## Which policies are created in this deployment?
+### Which policies are created in this deployment?
 * __The azure-policy-modify-enforce-tags.bicep policy__. Applies to all resources groups. It enforces the tag value pass through the script on all resources being to be deployed.
 * __The azure-policy-deny-location.bicep policy__. Applies only to the *00002-deny-locations* RG. It allows deployments *only* in __westus__ or __eastus__ regions.
 * __The azure-policy-deployifnotexists.bicep policy__. Applies only to the *00002-tags-deployifnotexists-nsg* RG. It deploys a __Network Segurity Group (NSG)__ if one does not exists.
 * __The azure-policy-modify-nic-to-add-nsg.bicep policy__. Applies only to the *00002-tags-deployifnotexists-nsg* RG. It modifies the network interface deployed with the virtual machine to add a references to the NSG previously created.
 
-## Which roles or permissions do you need?
+### Which roles or permissions do you need?
 In order to execute this project, you must have at least the following roles:
 * Contributor
 * Resource Policy Contributor
@@ -81,5 +85,11 @@ cd .\00002-PROJECT-AZURE-POLCY-REMEDIATION-TASKS\
             -pPassword $password
 ```
 
-## Credits
-This repository was initially created by [Jesus Lopez](https://www.linkedin.com/in/susejzepol/). Its purpose is to support learning and hands-on practice for the [AZ-305](https://learn.microsoft.com/en-us/credentials/certifications/exams/az-305/) and [AZ-104](https://learn.microsoft.com/en-us/credentials/certifications/azure-administrator/?practice-assessment-type=certification) certification exams, as well as to explore various Azure technologies.
+### Credits
+
+- **Author**: Jesus Lopez Mesia
+- **LinkedIn**: [linkedin.com/in/susejzepol/](https://www.linkedin.com/in/susejzepol/)
+- **Created**: December 6, 2025
+- **Last Modified**: January 20, 2026
+
+This project supports learning for [AZ-305](https://learn.microsoft.com/en-us/credentials/certifications/exams/az-305/) and [AZ-104](https://learn.microsoft.com/en-us/credentials/certifications/azure-administrator/) Azure certification exams.
