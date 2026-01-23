@@ -82,7 +82,7 @@ No additional Azure CLI extensions are required for this project. The deployment
 | Resource Type | Resource Name | Resource Group | Purpose |
 |---|---|---|---|
 | Azure Container Registry | `myacr*` (auto-generated) | RG-INFRA | Stores Docker images used by all projects |
-| Azure Container Instance | Auto-generated | `{ProjectPrefix}-RG1-ACI` | Runs the Hello World API container |
+| Azure Container Instance | Auto-generated | `00001-RG1-ACI` | Runs the Hello World API container |
 
 ---
 
