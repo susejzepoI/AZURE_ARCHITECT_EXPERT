@@ -25,52 +25,50 @@ In order to execute this project, you must have at least the following roles:
 Alternatively, you can create a custom role that includes these permissions:
 
 ```json
-    {
-        "id": "/subscriptions/24c299fa-aec1-489b-8cf2-671209727540/providers/Microsoft.Authorization/roleDefinitions/1d046d31-81e2-4fc8-bb32-c818594bb410",
-        "properties": {
-            "roleName": "00002_bicep_deployment_role",
-            "description": "",
-            "assignableScopes": [
-                "/subscriptions/24c299fa-aec1-489b-8cf2-671209727540"
-            ],
-            "permissions": [
-                {
-                    "actions": [
-                        "*",
-                        "Microsoft.Authorization/acquirePolicyToken/read",
-                        "Microsoft.Authorization/policyAssignments/read",
-                        "Microsoft.Authorization/policyAssignments/write",
-                        "Microsoft.Authorization/policyDefinitions/read",
-                        "Microsoft.Authorization/policyDefinitions/write",
-                        "Microsoft.Authorization/policyDefinitions/versions/write",
-                        "Microsoft.Authorization/policyEnrollments/write",
-                        "Microsoft.Authorization/policyEnrollments/read",
-                        "Microsoft.Authorization/policyDefinitions/versions/read",
-                        "Microsoft.Authorization/policySetDefinitions/write",
-                        "Microsoft.Authorization/policySetDefinitions/read",
-                        "Microsoft.Authorization/policySetDefinitions/versions/write",
-                        "Microsoft.Authorization/policySetDefinitions/versions/read",
-                        "Microsoft.Authorization/roleManagementPolicyAssignments/read"
-                    ],
-                    "notActions": [
-                        "Microsoft.Authorization/*/Delete",
-                        "Microsoft.Authorization/*/Write",
-                        "Microsoft.Authorization/elevateAccess/Action",
-                        "Microsoft.Blueprint/blueprintAssignments/write",
-                        "Microsoft.Blueprint/blueprintAssignments/delete",
-                        "Microsoft.Compute/galleries/share/action",
-                        "Microsoft.Purview/consents/write",
-                        "Microsoft.Purview/consents/delete",
-                        "Microsoft.Resources/deploymentStacks/manageDenySetting/action",
-                        "Microsoft.Subscription/cancel/action",
-                        "Microsoft.Subscription/enable/action"
-                    ],
-                    "dataActions": [],
-                    "notDataActions": []
-                }
-            ]
-        }
+{
+    "id": "/subscriptions/24c299fa-aec1-489b-8cf2-671209727540/providers/Microsoft.Authorization/roleDefinitions/1d046d31-81e2-4fc8-bb32-c818594bb410",
+    "properties": {
+        "roleName": "00002_bicep_deployment_role",
+        "description": "",
+        "assignableScopes": [
+            "/subscriptions/24c299fa-aec1-489b-8cf2-671209727540"
+        ],
+        "permissions": [
+            {
+                "actions": [
+                    "*",
+                    "Microsoft.Authorization/acquirePolicyToken/read",
+                    "Microsoft.Authorization/policyAssignments/read",
+                    "Microsoft.Authorization/policyAssignments/write",
+                    "Microsoft.Authorization/policyDefinitions/read",
+                    "Microsoft.Authorization/policyDefinitions/write",
+                    "Microsoft.Authorization/policyDefinitions/versions/write",
+                    "Microsoft.Authorization/policyEnrollments/write",
+                    "Microsoft.Authorization/policyEnrollments/read",
+                    "Microsoft.Authorization/policyDefinitions/versions/read",
+                    "Microsoft.Authorization/policySetDefinitions/write",
+                    "Microsoft.Authorization/policySetDefinitions/read",
+                    "Microsoft.Authorization/policySetDefinitions/versions/write",
+                    "Microsoft.Authorization/policySetDefinitions/versions/read",
+                    "Microsoft.Authorization/roleManagementPolicyAssignments/read"
+                ],
+                "notActions": [
+                    "Microsoft.Authorization/elevateAccess/Action",
+                    "Microsoft.Blueprint/blueprintAssignments/write",
+                    "Microsoft.Blueprint/blueprintAssignments/delete",
+                    "Microsoft.Compute/galleries/share/action",
+                    "Microsoft.Purview/consents/write",
+                    "Microsoft.Purview/consents/delete",
+                    "Microsoft.Resources/deploymentStacks/manageDenySetting/action",
+                    "Microsoft.Subscription/cancel/action",
+                    "Microsoft.Subscription/enable/action"
+                ],
+                "dataActions": [],
+                "notDataActions": []
+            }
+        ]
     }
+}
 ```
 
 #### 3. Run the main scripts
@@ -85,11 +83,11 @@ cd .\00002-PROJECT-AZURE-POLCY-REMEDIATION-TASKS\
             -pPassword $password
 ```
 
-### Credits
+## Credits
 
 - **Author**: Jesus Lopez Mesia
 - **LinkedIn**: [linkedin.com/in/susejzepol/](https://www.linkedin.com/in/susejzepol/)
 - **Created**: December 6, 2025
 - **Last Modified**: January 20, 2026
 
-This project supports learning for [AZ-305](https://learn.microsoft.com/en-us/credentials/certifications/exams/az-305/) and [AZ-104](https://learn.microsoft.com/en-us/credentials/certifications/azure-administrator/) Azure certification exams.
+This project supports learning and hands-on practice for the [AZ-305](https://learn.microsoft.com/en-us/credentials/certifications/exams/az-305/) and [AZ-104](https://learn.microsoft.com/en-us/credentials/certifications/azure-administrator/) Azure certification exams, as well as to explore various Azure technologies.
