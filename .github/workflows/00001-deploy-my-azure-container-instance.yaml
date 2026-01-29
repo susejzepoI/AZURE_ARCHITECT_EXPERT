@@ -6,11 +6,11 @@ on:
   push:
     branches: [ "current" ]
     paths:
-      - '00001-PROJECT-AZURE-CONTAINER-INSTANCE/**'
+      - '00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/**'
   pull_request:
     branches: [ "current" ]
     paths:
-      - '00001-PROJECT-AZURE-CONTAINER-INSTANCE/**'
+      - '00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/**'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -36,7 +36,7 @@ jobs:
       - name: Run powershell deployment scripts.
         shell: pwsh
         run: |
-          cd .\00001-PROJECT-AZURE-CONTAINER-INSTANCE\
+          cd .\00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE\
           .\main.ps1 `
             -SubscriptionName "Suscripción de Plataformas de MSDN" `
             -ImageName "hello_api:latest" `
