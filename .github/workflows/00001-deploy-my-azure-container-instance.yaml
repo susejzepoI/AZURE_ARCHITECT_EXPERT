@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -31,12 +31,12 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image
-        shell: pwsh
+        shell: bash
         run: |
           docker build -t hello_api:latest -f ./00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/My-Hello-world-api/My_Hello_World_Api/Dockerfile ./00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/My-Hello-world-api/My_Hello_World_Api
 
       - name: Run Docker container
-        shell: pwsh
+        shell: bash
         run: |
           docker run -d -p 8080:80 --name hello_api_container hello_api:latest
 
@@ -50,8 +50,5 @@ jobs:
       - name: Run powershell deployment scripts.
         shell: pwsh
         run: |
-          cd .\00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE\
-          .\main.ps1 `
-            -SubscriptionName "Suscripción de Plataformas de MSDN" `
-            -ImageName "hello_api:latest" `
-            -Environment "DEV"
+          cd ./00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/
+          pwsh -File ./main.ps1 -SubscriptionName "Suscripción de Plataformas de MSDN" -ImageName "hello_api:latest" -Environment "DEV"
