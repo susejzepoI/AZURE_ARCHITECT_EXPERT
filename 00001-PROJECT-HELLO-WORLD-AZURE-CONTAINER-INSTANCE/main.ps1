@@ -1,15 +1,15 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      06-12-2025
-#Modified date:     22-01-2026
+#Modified date:     28-01-2026
 
 [cmdletBinding()]
 param(
-    [parameter(HelpMessage='Name of the subscription to use in the script.')]
+    [parameter(Mandatory=$true,HelpMessage='Name of the subscription to use in the script.')]
     [string]$SubscriptionName = 'Suscripción de Plataformas de MSDN', 
     [parameter(Mandatory=$true)]
     [string]$ImageName,
-    [parameter()]
+    [parameter(Mandatory=$true)]
     [string]$Environment = 'Development'
 )
 
