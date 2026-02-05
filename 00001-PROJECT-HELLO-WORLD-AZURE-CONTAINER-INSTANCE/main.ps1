@@ -59,7 +59,8 @@ $pMyNameACR = $(
     --template-file '../infra/bicep/04.- Azure Container Registry/deploy-my-acr.bicep' `
     --parameters acrName=$pMyNameACR `
     --subscription $pSubscriptionName `
-    --query properties.outputs.acrName.value
+    --query properties.outputs.acrName.value `
+    -o tsv
 ).Replace('"','')
 
 Write-Host "Logging in to the Azure Container Registry: $($pMyNameACR)" -BackgroundColor Green
