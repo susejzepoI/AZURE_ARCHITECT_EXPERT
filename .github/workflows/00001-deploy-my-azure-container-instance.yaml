@@ -6,11 +6,11 @@ on:
   push:
     branches: [ "current" ]
     paths:
-      - '00001-PROJECT-AZURE-CONTAINER-INSTANCE/**'
+      - '00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/**'
   pull_request:
     branches: [ "current" ]
     paths:
-      - '00001-PROJECT-AZURE-CONTAINER-INSTANCE/**'
+      - '00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/**'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -21,11 +21,25 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+      
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        shell: bash
+        run: |
+          docker build -t hello_api:latest -f ./00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/My-Hello-world-api/My_Hello_World_Api/Dockerfile ./00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/My-Hello-world-api/My_Hello_World_Api
+
+      - name: Run Docker container
+        shell: bash
+        run: |
+          docker run -d -p 8080:80 --name hello_api_container hello_api:latest
+
       - name: Azure login
         uses: azure/login@v2
         with:
@@ -36,6 +50,5 @@ jobs:
       - name: Run powershell deployment scripts.
         shell: pwsh
         run: |
-          cd .\00001-PROJECT-AZURE-CONTAINER-INSTANCE\
-          .\main.ps1 `
-            -ProjectPrefix "00001"
+          cd ./00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/
+          pwsh -File ./main.ps1 -SubscriptionName "Suscripción de Plataformas de MSDN" -ImageName "hello_api:latest" -Environment "DEV"

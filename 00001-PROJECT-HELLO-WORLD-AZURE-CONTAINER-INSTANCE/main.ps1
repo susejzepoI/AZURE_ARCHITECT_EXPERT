@@ -1,15 +1,15 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      06-12-2025
-#Modified date:     22-01-2026
+#Modified date:     04-02-2026
 
 [cmdletBinding()]
 param(
-    [parameter(HelpMessage='Name of the subscription to use in the script.')]
+    [parameter(Mandatory=$true,HelpMessage='Name of the subscription to use in the script.')]
     [string]$SubscriptionName = 'Suscripción de Plataformas de MSDN', 
     [parameter(Mandatory=$true)]
     [string]$ImageName,
-    [parameter()]
+    [parameter(Mandatory=$true)]
     [string]$Environment = 'Development'
 )
 
@@ -35,7 +35,7 @@ az deployment sub create `
     --subscription $pSubscriptionName
 
 Write-Host "Deploying the resource group: $pResourceGroupName" -BackgroundColor Green
-$DeploymentName = "$($ProjectPrefix)-rg1-Deployment-1"
+$DeploymentName = "$($pProjectPrefix)-rg1-Deployment-1"
 az deployment sub create `
     --name $DeploymentName `
     --location 'chilecentral' `
@@ -54,15 +54,16 @@ $pMyNameACR = $(
 
 $pMyNameACR = $(
     az deployment group create `
-    --name "$($ProjectPrefix)-acr-infra-deployment-2" `
+    --name "$($pProjectPrefix)-acr-infra-deployment-2" `
     --resource-group $pResourceGroupInfraName `
     --template-file '../infra/bicep/04.- Azure Container Registry/deploy-my-acr.bicep' `
     --parameters acrName=$pMyNameACR `
     --subscription $pSubscriptionName `
-    --query properties.outputs.acrName.value
-)
+    --query properties.outputs.acrName.value `
+    -o tsv
+).Replace('"','')
 
-Write-Host "Logging in to the Azure Container Registry" -BackgroundColor Green
+Write-Host "Logging in to the Azure Container Registry: $($pMyNameACR)" -BackgroundColor Green
 $pAcr_login  = $(az acr show --name $pMyNameACR --resource-group $pResourceGroupInfraName --query "loginServer" -o tsv)
 az acr login --name $pAcr_login --resource-group $pResourceGroupInfraName
 
@@ -83,7 +84,7 @@ $acrPass = (az acr credential show --name $pMyNameACR --resource-group $pResourc
 Write-Host "Deploying the Azure Container Instance" -BackgroundColor Green
 $container_ip = $(
             az deployment group create `
-                --name "$($ProjectPrefix)-aci-deployment-3" `
+                --name "$($pProjectPrefix)-aci-deployment-3" `
                 --resource-group $pResourceGroupName `
                 --template-file '../infra/bicep/05.- Azure Container Instance/simple-aci.bicep' `
                 --parameters acrLoginServer=$pAcr_login `
