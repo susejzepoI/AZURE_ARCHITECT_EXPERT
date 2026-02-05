@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      06-12-2025
-#Modified date:     30-01-2026
+#Modified date:     04-02-2026
 
 [cmdletBinding()]
 param(
@@ -62,7 +62,7 @@ $pMyNameACR = $(
     --query properties.outputs.acrName.value
 )
 
-Write-Host "Logging in to the Azure Container Registry" -BackgroundColor Green
+Write-Host "Logging in to the Azure Container Registry: $($pMyNameACR)" -BackgroundColor Green
 $pAcr_login  = $(az acr show --name $pMyNameACR --resource-group $pResourceGroupInfraName --query "loginServer" -o tsv)
 az acr login --name $pAcr_login --resource-group $pResourceGroupInfraName
 
