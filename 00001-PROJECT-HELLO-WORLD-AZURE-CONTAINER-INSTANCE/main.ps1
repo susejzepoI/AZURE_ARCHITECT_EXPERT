@@ -60,7 +60,7 @@ $pMyNameACR = $(
     --parameters acrName=$pMyNameACR `
     --subscription $pSubscriptionName `
     --query properties.outputs.acrName.value
-)
+).Replace('"','')
 
 Write-Host "Logging in to the Azure Container Registry: $($pMyNameACR)" -BackgroundColor Green
 $pAcr_login  = $(az acr show --name $pMyNameACR --resource-group $pResourceGroupInfraName --query "loginServer" -o tsv)

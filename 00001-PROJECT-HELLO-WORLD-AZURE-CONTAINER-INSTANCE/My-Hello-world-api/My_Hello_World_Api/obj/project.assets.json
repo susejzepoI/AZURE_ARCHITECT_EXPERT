@@ -488,11 +488,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Respaldo\\DEV\\Azure\\AZURE_ARCHITECT_EXPERT\\00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE\\My-Hello-world-api\\My_Hello_World_Api\\My_Hello_World_Api.csproj",
+      "projectUniqueName": "c:\\Respaldo\\DEV\\Azure\\AZURE_ARCHITECT_EXPERT\\00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE\\My-Hello-world-api\\My_Hello_World_Api\\My_Hello_World_Api.csproj",
       "projectName": "My_Hello_World_Api",
-      "projectPath": "C:\\Respaldo\\DEV\\Azure\\AZURE_ARCHITECT_EXPERT\\00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE\\My-Hello-world-api\\My_Hello_World_Api\\My_Hello_World_Api.csproj",
+      "projectPath": "c:\\Respaldo\\DEV\\Azure\\AZURE_ARCHITECT_EXPERT\\00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE\\My-Hello-world-api\\My_Hello_World_Api\\My_Hello_World_Api.csproj",
       "packagesPath": "C:\\Users\\jesus\\.nuget\\packages\\",
-      "outputPath": "C:\\Respaldo\\DEV\\Azure\\AZURE_ARCHITECT_EXPERT\\00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE\\My-Hello-world-api\\My_Hello_World_Api\\obj\\",
+      "outputPath": "c:\\Respaldo\\DEV\\Azure\\AZURE_ARCHITECT_EXPERT\\00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE\\My-Hello-world-api\\My_Hello_World_Api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -524,7 +524,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "10.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -558,7 +559,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
