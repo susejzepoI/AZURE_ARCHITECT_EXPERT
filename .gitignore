@@ -1,18 +1,64 @@
-# Ignore build directories
-/bin/
-/obj/
-/00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/My-Hello-world-api/My_Hello_World_Api/bin/
-/00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/My-Hello-world-api/My_Hello_World_Api/obj/
-# Ignore user-specific files
-*.user
-*.suo
+# Build and Object directories
+bin/
+obj/
 
-# Ignore configuration files
-appsettings.Development.json
-/00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/My-Hello-world-api/My_Hello_World_Api/appsettings.Development.json
-# Ignore temporary files
-*.tmp
-*.log
-
-# Ignore Visual Studio specific files
+# Visual Studio Cache/Options
 .vs/
+.vscode/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Rider
+.idea/
+*.sln.iml
+
+# ReSharper
+.resharper
+.resharper.user
+*.resharper
+*.resharper.user
+
+# Local environment variables and configuration
+appsettings.Development.json
+appsettings.Local.json
+.env
+.env.local
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+# Build artifacts
+*.dll
+*.exe
+*.pdb
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.swp
+*~
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Docker
+.dockerignore
+
+# Test Results
+TestResults/
+.coverage/
+
+# dotnet publish output
+publish/
+PublishProfiles/
+
+# User secrets
+secrets.json
