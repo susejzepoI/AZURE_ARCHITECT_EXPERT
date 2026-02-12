@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      06-12-2025
-#Modified date:     04-02-2026
+#Modified date:     11-02-2026
 
 [cmdletBinding()]
 param(
@@ -15,7 +15,7 @@ param(
 
 #JLopez-20251222: Defining the resource groups to be created.
 $pSubscriptionName              = $SubscriptionName
-$pProjectPrefix                 = "00001"
+$pProjectPrefix                 = "00001-$($Environment)"
 $pResourceGroupName             = "$($pProjectPrefix)-RG1-ACI"
 #JLopez-20251222: This resource group will contain shared resources for all subprojects.
 $pResourceGroupInfraName        = "RG-INFRA"
