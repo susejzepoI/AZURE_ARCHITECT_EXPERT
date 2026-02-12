@@ -22,8 +22,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      ENVIRONMENT: ${{ secrets.ENVIRONMENT_NAME }}
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
@@ -52,4 +50,4 @@ jobs:
         shell: pwsh
         run: |
           cd ./00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/
-          pwsh -File ./main.ps1 -SubscriptionName "Suscripción de Plataformas de MSDN" -ImageName "hello_api:latest" -Environment $ENVIRONMENT
+          pwsh -File ./main.ps1 -SubscriptionName "Suscripción de Plataformas de MSDN" -ImageName "hello_api:latest" -Environment ${{ secrets.ENVIRONMENT_NAME }}
