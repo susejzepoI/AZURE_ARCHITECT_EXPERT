@@ -53,4 +53,4 @@ jobs:
           cd ./00001-PROJECT-HELLO-WORLD-AZURE-CONTAINER-INSTANCE/
           pwsh -File ./main.ps1 -SubscriptionName "Suscripción de Plataformas de MSDN" -ImageName "hello_api:latest" -Environment $ENVIRONMENT
         env:
-          ENVIRONMENT: ${{secrets.ENVIRONMENT_NAME}}
+          ENVIRONMENT: ${{ secrets.ENVIRONMENT_NAME }}
