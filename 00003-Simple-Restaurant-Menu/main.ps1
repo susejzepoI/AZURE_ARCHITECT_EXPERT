@@ -20,6 +20,18 @@ $pBlobStorageContainerName      = "$($RestaurantName)container"
 $pWebAppName                    = "$($pProject)-$($RestaurantName)-webapp"
 $pServicebusNamespaceName       = "$($pProject)-$($RestaurantName)-sbns"
 $pLocation                      = 'chilecentral'
+$pContainersName                = @(
+                                        "'Starters'"
+                                        "'Mains'"
+                                        "'Desserts'"
+                                        "'Sides'"
+                                        "'Non-Alcoholic Beverages'"
+                                        "'Alcoholic Beverages'"
+                                        "'Backups'"
+                                    )
+
+# Convert the PowerShell array into a compressed JSON string representation
+$containersJson = $pContainersName | ConvertTo-Json -Compress
 
 Write-Host "Starting deployment for project: $($pProject)" -BackgroundColor Green
 Write-Host "Using subscription: $($SubscriptionName)" -BackgroundColor Green
@@ -44,5 +56,4 @@ az deployment group create `
     --name 'az-deploy-group-sa-01' `
     --template-file '../infra/bicep/06.- Azure Blob Storage/simple-storage-account-StorageV2-Standard_LRS-Hot.bicep' `
     --parameters storageAccountName=$pStorageAccountName storageAccountLocaltion=$pLocation `
-    --resource-group $pResourceGroupName `
-    --debug
+    --resource-group $pResourceGroupName
