@@ -1,13 +1,13 @@
 param storageAccountName string
 param storageAccountLocaltion string
 param containerNames array = [
-  'Starters"'
-  'Mains"'
-  'Desserts"'
-  'Sides"'
-  'Non-Alcoholic Beverages"'
-  'Alcoholic Beverages"'
-  'Backups'
+  'starters'
+  'mains'
+  'desserts'
+  'sides'
+  'non-alcoholi-beverages'
+  'alcoholic-beverages'
+  'backups'
 ]
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2026-04-01' = {

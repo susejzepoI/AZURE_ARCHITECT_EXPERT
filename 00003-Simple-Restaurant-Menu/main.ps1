@@ -1,12 +1,12 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      13-08-2026
-#Modified date:     13-08-2026
+#Modified date:     27-08-2026
 
 [CmdletBinding()]
 param (
-    [Parameter()]
-    [string]$SubscriptionName      = 'Suscripción de Plataformas de MSDN',
+    [Parameter(mandatory = $true)]
+    [string]$SubscriptionId,
     [string]$EnvironmentTagName    = 'Environment',
     [string]$EnvironmentValue      = 'Development',
     [Parameter(mandatory = $true)]
@@ -34,7 +34,7 @@ $pContainersName                = @(
 $containersJson = $pContainersName | ConvertTo-Json -Compress
 
 Write-Host "Starting deployment for project: $($pProject)" -BackgroundColor Green
-Write-Host "Using subscription: $($SubscriptionName)" -BackgroundColor Green
+Write-Host "Using subscription: $($SubscriptionId)" -BackgroundColor Green
 Write-Host "Resource Group: $($pResourceGroupName)" -BackgroundColor Green
 Write-Host "Location: $($pLocation)" -BackgroundColor Green
 Write-Host "Storage Account: $($pStorageAccountName)" -BackgroundColor Green
@@ -49,7 +49,7 @@ az deployment sub create `
     --location $pLocation `
     --template-file '../infra/bicep/01.- resource-group/resource-group.bicep' `
     --parameters pName=$pResourceGroupName pLocation=$pLocation `
-    --subscription $SubscriptionName
+    --subscription $SubscriptionId
 
 write-host "Deploying the account storage account $($pStorageAccountName)" -BackgroundColor Green
 az deployment group create `
