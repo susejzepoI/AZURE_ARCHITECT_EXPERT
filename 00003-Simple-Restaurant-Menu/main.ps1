@@ -10,12 +10,13 @@ param (
     [Parameter(mandatory = $true)]
     [string]$RestaurantName,
     [string]$EnvironmentTagName    = 'Environment',
-    [string]$EnvironmentValue      = 'Development'
+    [string]$EnvironmentValue      = 'Dev'
 )
 
+$pRestaurantName                = $RestaurantName.ToLower()
 $pProject                       = '00003'
-$pResourceGroupName             = "$($pProject)-simple-restaurant-menu-$($EnvironmentValue)"
-$pStorageAccountName            = "$($pProject)sa"
+$pResourceGroupName             = "$($pProject)-$($pRestaurantName)-simple-restaurant-menu-$($EnvironmentValue)"
+$pStorageAccountName            = "$($pProject)$($pRestaurantName)sa"
 $pBlobStorageContainerName      = "$($RestaurantName)container"
 $pWebAppName                    = "$($pProject)-$($RestaurantName)-webapp"
 $pServicebusNamespaceName       = "$($pProject)-$($RestaurantName)-sbns"
@@ -40,8 +41,15 @@ az deployment sub create `
     --subscription $SubscriptionId
 
 write-host "Deploying the account storage account $($pStorageAccountName)" -BackgroundColor Green
-az deployment group create `
-    --name 'az-deploy-group-sa-01' `
-    --template-file '../infra/bicep/06.- Azure Blob Storage/simple-storage-account-StorageV2-Standard_LRS-Hot.bicep' `
-    --parameters storageAccountName=$pStorageAccountName storageAccountLocaltion=$pLocation containerNames=$pContainersName `
-    --resource-group $pResourceGroupName
+$ContainersName = (
+    az deployment group create `
+        --name 'az-deploy-group-sa-01' `
+        --template-file '../infra/bicep/06.- Azure Blob Storage/simple-storage-account-StorageV2-Standard_LRS-Hot.bicep' `
+        --parameters storageAccountName=$pStorageAccountName storageAccountLocaltion=$pLocation containerNames=$pContainersName `
+        --resource-group $pResourceGroupName `
+        --query properties.outputs.outContainersCreated.value `
+        --output tsv
+)
+
+Write-Host "The following containers were created in the storage account: $($pStorageAccountName)" -BackgroundColor Yellow
+$ContainersName | ForEach-Object {Write-Host "Container: [$PSItem]" -BackgroundColor Yellow}

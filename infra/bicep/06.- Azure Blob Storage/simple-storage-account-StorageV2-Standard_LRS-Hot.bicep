@@ -30,3 +30,5 @@ resource containers 'Microsoft.Storage/storageAccounts/blobServices/containers@2
     publicAccess: 'None' // Options: 'None', 'Blob', or 'Container'
   }
 }]
+
+output outContainersCreated array = containersArray
