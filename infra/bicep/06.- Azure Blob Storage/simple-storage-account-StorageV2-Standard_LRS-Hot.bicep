@@ -1,14 +1,8 @@
 param storageAccountName string
 param storageAccountLocaltion string
-param containerNames array = [
-  'starters'
-  'mains'
-  'desserts'
-  'sides'
-  'non-alcoholi-beverages'
-  'alcoholic-beverages'
-  'backups'
-]
+param containerNames string
+
+var containersArray = split(containerNames,',')
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2026-04-01' = {
   kind: 'StorageV2'
@@ -29,7 +23,7 @@ resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2026-04-01'
   parent: storageAccount
 }
 
-resource containers 'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01' = [for containerName in containerNames: {
+resource containers 'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01' = [for containerName in containersArray: {
   name: containerName
   parent: blobService
   properties: {

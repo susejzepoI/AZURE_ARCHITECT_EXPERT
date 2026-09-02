@@ -1,16 +1,16 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      13-08-2026
-#Modified date:     27-08-2026
+#Modified date:     01-09-2026
 
 [CmdletBinding()]
 param (
     [Parameter(mandatory = $true)]
     [string]$SubscriptionId,
-    [string]$EnvironmentTagName    = 'Environment',
-    [string]$EnvironmentValue      = 'Development',
     [Parameter(mandatory = $true)]
-    [string]$RestaurantName
+    [string]$RestaurantName,
+    [string]$EnvironmentTagName    = 'Environment',
+    [string]$EnvironmentValue      = 'Development'
 )
 
 $pProject                       = '00003'
@@ -20,18 +20,7 @@ $pBlobStorageContainerName      = "$($RestaurantName)container"
 $pWebAppName                    = "$($pProject)-$($RestaurantName)-webapp"
 $pServicebusNamespaceName       = "$($pProject)-$($RestaurantName)-sbns"
 $pLocation                      = 'chilecentral'
-$pContainersName                = @(
-                                        "'Starters'"
-                                        "'Mains'"
-                                        "'Desserts'"
-                                        "'Sides'"
-                                        "'Non-Alcoholic Beverages'"
-                                        "'Alcoholic Beverages'"
-                                        "'Backups'"
-                                    )
-
-# Convert the PowerShell array into a compressed JSON string representation
-$containersJson = $pContainersName | ConvertTo-Json -Compress
+$pContainersName                = 'starters,mains,desserts,sides,non-alcoholic-beverages,alcoholic-beverages,backups'
 
 Write-Host "Starting deployment for project: $($pProject)" -BackgroundColor Green
 Write-Host "Using subscription: $($SubscriptionId)" -BackgroundColor Green
@@ -41,7 +30,6 @@ Write-Host "Storage Account: $($pStorageAccountName)" -BackgroundColor Green
 Write-Host "Blob storage container: $($pBlobStorageContainerName)" -BackgroundColor Green
 Write-Host "Web App: $($pWebAppName)" -BackgroundColor Green
 Write-Host "Service Bus Namespace: $($pServicebusNamespaceName)" -BackgroundColor Green
-
 
 Write-Host "Deploying the resource group: $($pResourceGroupName)" -BackgroundColor Green
 az deployment sub create `
@@ -55,5 +43,5 @@ write-host "Deploying the account storage account $($pStorageAccountName)" -Back
 az deployment group create `
     --name 'az-deploy-group-sa-01' `
     --template-file '../infra/bicep/06.- Azure Blob Storage/simple-storage-account-StorageV2-Standard_LRS-Hot.bicep' `
-    --parameters storageAccountName=$pStorageAccountName storageAccountLocaltion=$pLocation `
+    --parameters storageAccountName=$pStorageAccountName storageAccountLocaltion=$pLocation containerNames=$pContainersName `
     --resource-group $pResourceGroupName
