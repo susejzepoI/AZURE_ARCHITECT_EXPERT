@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      13-08-2026
-#Modified date:     04-09-2026
+#Modified date:     06-09-2026
 
 [CmdletBinding()]
 param (
@@ -9,8 +9,8 @@ param (
     [string]$SubscriptionId,
     [Parameter(mandatory = $true)]
     [string]$RestaurantName,
-    [string]$EnvironmentTagName    = 'Environment',
-    [string]$EnvironmentValue      = 'Dev'
+    [string]$EnvironmentTagName    = 'environment',
+    [string]$EnvironmentValue      = 'dev'
 )
 
 $pRestaurantName                = $RestaurantName.ToLower()
@@ -19,9 +19,12 @@ $pResourceGroupName             = "$($pProject)-$($pRestaurantName)-simple-resta
 $pStorageAccountName            = "$($pProject)$($pRestaurantName)sa"
 $pBlobStorageContainerName      = "$($RestaurantName)container"
 $pWebAppName                    = "$($pProject)-$($RestaurantName)-webapp"
+$pServicePlanName               = "$($pProject)-$($RestaurantName)-serverfarms"
 $pServicebusNamespaceName       = "$($pProject)-$($RestaurantName)-sbns"
 $pLocation                      = 'chilecentral'
 $pContainersName                = 'starters,mains,desserts,sides,non-alcoholic-beverages,alcoholic-beverages,backups'
+
+write-host "--------------------------------------------------------------------------------" -BackgroundColor Green
 
 Write-Host "Starting deployment for project: $($pProject)" -BackgroundColor Green
 Write-Host "Using subscription: $($SubscriptionId)" -BackgroundColor Green
@@ -31,6 +34,8 @@ Write-Host "Storage Account: $($pStorageAccountName)" -BackgroundColor Green
 Write-Host "Blob storage container: $($pBlobStorageContainerName)" -BackgroundColor Green
 Write-Host "Web App: $($pWebAppName)" -BackgroundColor Green
 Write-Host "Service Bus Namespace: $($pServicebusNamespaceName)" -BackgroundColor Green
+
+write-host "--------------------------------------------------------------------------------" -BackgroundColor Green
 
 Write-Host "Deploying the resource group: $($pResourceGroupName)" -BackgroundColor Green
 az deployment sub create `
@@ -52,4 +57,15 @@ $ContainersName = (
 )
 
 Write-Host "The following containers were created in the storage account: $($pStorageAccountName)" -BackgroundColor Yellow
-$ContainersName | ForEach-Object {Write-Host "Container: [$PSItem]" -BackgroundColor Yellow}
+$ContainersName | ForEach-Object {Write-Host "Container: [$PSItem]"}
+
+write-host "--------------------------------------------------------------------------------" -BackgroundColor Green
+
+Write-Host "Deploying the service plan: $($pServicePlanName)" -BackgroundColor Green
+Write-Host "Deploying the web app: $($pWebAppName)" -BackgroundColor Green
+
+az deployment group create `
+    --name 'az-deploy-group-web-app-01' `
+    --template-file '../infra/bicep/07.- Azure Web App/basic-web-app-linux-no-bd-no-container-no-insights-no-cd.bicep' `
+    --parameters webAppName=$pWebAppName appServicePlanName=$pServicePlanName location=$pLocation `
+    --resource-group $pResourceGroupName
