@@ -1,22 +1,29 @@
-import React, { Component } from 'react';
+import {useEffect, useState} from 'react';
 
-export class FetchMenuOptions extends Component {
-  static displayName = FetchMenuOptions.name;
+export function FetchMenuOptions(){
+  const [options, setOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  constructor(props) {
-    super(props);
-    this.state = { options: [], loading: true };
-  }
-
-  async populateMenuOptions() {
-    const response = await fetch('menuoptions');
+  async function populateMenuOptions(){
+    const response = await fetch('/menuoptions');
     const data = await response.json();
-    this.setState({ options: data, loading: false });
+    setOptions(data);
+    setLoading(false);
   }
-}
 
-  return(
-    <div className="btn-containers">
-      <button type="button" className="filter-btn" onClick={this.populateMenuOptions}>Fetch Menu Options</button>
-    </div>
+  useEffect(()=>{
+    populateMenuOptions();
+  },[]);
+
+  if (loading){
+    return <p>Loading...</p>;
+  }
+
+  return (
+    <ul>
+      {options.map((option) => (
+        <li key={option}>{option}</li>
+      ))}
+    </ul>
   );
+}

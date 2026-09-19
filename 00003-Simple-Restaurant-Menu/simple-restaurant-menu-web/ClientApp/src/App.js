@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
-import MenuOptions from './components/MenuOptions';
+import React, { Component } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import AppRoutes from './AppRoutes';
+import { Layout } from './components/Layout';
+import './custom.css';
 
-return (
-  <main>
-    <section className="menu section">
-      <div className="title">
-        <h2>Our Menu</h2>
-        <div className="underline"/>
-      </div>
-      <MenuOptions />
-    </section>
-  </main>
-)
+export default class App extends Component {
+  static displayName = App.name;
 
-export default App;
+  render() {
+    return (
+      <Layout>
+        <Routes>
+          {AppRoutes.map((route, index) => {
+            const { element, ...rest } = route;
+            return <Route key={index} {...rest} element={element} />;
+          })}
+        </Routes>
+      </Layout>
+    );
+  }
+}
