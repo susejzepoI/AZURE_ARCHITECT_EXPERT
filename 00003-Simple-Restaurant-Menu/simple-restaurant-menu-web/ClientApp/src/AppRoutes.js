@@ -1,9 +1,9 @@
-import { FetchMenuOptions } from "./components/FetchMenuOptions";
+import { MenuOptions } from "./components/MenuOptions";
 
 const AppRoutes = [
   {
     index: true,
-    element: <FetchMenuOptions />
+    element: <MenuOptions />
   }
 ];
 
