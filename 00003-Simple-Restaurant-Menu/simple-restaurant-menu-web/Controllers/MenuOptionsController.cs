@@ -8,7 +8,7 @@ public class MenuOptionsController : ControllerBase
 {
     private static readonly string[] Options = new[]
     {
-        "starters", "mains", "desserts", "sides", "non-alcoholic-beverages", "alcoholic-beverages", "backups"
+        "starters", "mains", "desserts", "sides", "non-alcoholic-beverages", "alcoholic-beverages"
     };
 
     private readonly ILogger<MenuOptionsController> _logger;

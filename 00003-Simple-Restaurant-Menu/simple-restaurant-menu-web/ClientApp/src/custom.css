@@ -16,3 +16,29 @@ code {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+
+/*Menu options styles*/
+.menu-options__bar {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-block: 1.5rem;
+}
+
+.menu-options__button {
+  padding: 0.6rem 1rem;
+  border: 1px solid #176b5b;
+  border-radius: 4px;
+  background: white;
+  color: #176b5b;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.menu-options__button:hover,
+.menu-options__button:focus-visible {
+  background: #176b5b;
+  color: white;
+  transform: translateY(-2px);
+}

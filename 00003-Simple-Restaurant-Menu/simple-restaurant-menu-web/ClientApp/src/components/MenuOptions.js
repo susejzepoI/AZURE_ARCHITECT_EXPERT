@@ -32,11 +32,17 @@ export function MenuOptions(){
   return (
     <section>
       <h1>Our Menu Options</h1> 
-    <ul>
-      {options.map((option) => (
-        <li key={option}>{option}</li>
-      ))}
-    </ul>
+      <div className="menu-options__bar" role="group" aria-label="Menu categories">
+        {options.map((option) => (
+          <button
+            key={option}
+            type="button"
+            className="menu-options__button"
+          >
+            {option.replaceAll('-', ' ')}
+          </button>
+        ))}
+      </div>
     </section>
   );
 }
