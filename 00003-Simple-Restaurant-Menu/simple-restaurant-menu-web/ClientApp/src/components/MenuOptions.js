@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 
-export function FetchMenuOptions(){
+export function MenuOptions(){
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,10 +30,13 @@ export function FetchMenuOptions(){
   }
 
   return (
+    <section>
+      <h1>Our Menu Options</h1> 
     <ul>
       {options.map((option) => (
         <li key={option}>{option}</li>
       ))}
     </ul>
+    </section>
   );
 }
