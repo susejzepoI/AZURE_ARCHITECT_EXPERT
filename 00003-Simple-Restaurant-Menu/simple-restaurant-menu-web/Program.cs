@@ -1,8 +1,15 @@
+using Azure.Identity;
+using Azure.Storage.Blobs;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllersWithViews();
+
+// Add services to the container.
+var blobServiceUri = builder.Configuration["BlobStorage:ServiceUri"]
+                        ?? throw new InvalidOperationException("BlobStorage:ServiceUri is not configured in appsettings.json.");
+
+builder.Services.AddSingleton(new BlobServiceClient(new Uri(blobServiceUri), new DefaultAzureCredential()));
 
 var app = builder.Build();
 

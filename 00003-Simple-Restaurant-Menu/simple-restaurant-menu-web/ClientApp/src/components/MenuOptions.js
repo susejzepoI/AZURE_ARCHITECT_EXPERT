@@ -43,6 +43,8 @@ export function MenuOptions(){
           </button>
         ))}
       </div>
+      <div className="menu-options__content">
+      </div>  
     </section>
   );
 }
