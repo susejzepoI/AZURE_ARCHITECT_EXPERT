@@ -9,10 +9,19 @@ export function MenuOptions(){
     async function populateMenuOptions(){
       try{
         const response = await fetch('/menuoptions');
+        if (!response.ok) {
+          const message = await response.text();
+          throw new Error(message || `Request failed with status ${response.status}`);
+        }
+
         const data = await response.json();
+        if (!Array.isArray(data)) {
+          throw new Error('The menu options response was not a list.');
+        }
+
         setOptions(data);
       }catch(requestError){
-        setError(requestError);
+        setError(requestError instanceof Error ? requestError : new Error('Unable to load menu options.'));
       }finally{
         setLoading(false);
       }  
