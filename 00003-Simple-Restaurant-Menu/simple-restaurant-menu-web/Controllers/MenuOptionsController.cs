@@ -59,7 +59,7 @@ public class MenuOptionsController : ControllerBase
                 }
 
                 var imageUrl =
-                    $"/MenuOptions/{Uri.EscapeDataString(containerName)}/image?blobName={Uri.EscapeDataString(blob.Name)}";
+                    $"/menuoptions/{Uri.EscapeDataString(containerName)}/image?blobName={Uri.EscapeDataString(blob.Name)}";
                 images.Add(new MenuImage(blob.Name, imageUrl));
             }
 
