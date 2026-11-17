@@ -1,5 +1,10 @@
 import {useEffect, useState} from 'react';
 
+function getImageName(blobName){
+  const fileName = blobName.split('/').pop() || blobName;
+  return fileName.replace(/\.[^.]+$/, '').replaceAll('-', ' ');
+}
+
 export function MenuOptions(){
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -122,11 +127,11 @@ export function MenuOptions(){
                   <figure className="menu-images__item" key={image.name}>
                     <img
                       src={image.imageUrl}
-                      alt={image.name.split('/').pop().replaceAll('-', ' ')}
+                      alt={getImageName(image.name)}
                       loading="lazy"
                     />
                     <figcaption>
-                      {image.name.split('/').pop().replaceAll('-', ' ')}
+                      {getImageName(image.name)}
                     </figcaption>
                   </figure>
                 ))}
