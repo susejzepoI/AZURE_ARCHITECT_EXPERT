@@ -1,0 +1,6 @@
+#Users need to review each project implemetation.
+*.ps1 @cmercedez
+/infra @cmercedez
+
+#Users need to review the gitHub workflows and CODEOWNER file
+/.github @susejzepoI
