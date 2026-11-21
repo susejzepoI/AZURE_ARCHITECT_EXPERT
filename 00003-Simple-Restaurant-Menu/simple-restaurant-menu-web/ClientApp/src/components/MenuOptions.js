@@ -13,6 +13,7 @@ export function MenuOptions(){
   const [images, setImages] = useState([]);
   const [imagesLoading, setImagesLoading] = useState(false);
   const [imagesError, setImagesError] = useState(null);
+  const [flippedCard, setFlippedCard] = useState(null);
 
   useEffect(()=>{
     async function populateMenuOptions(){
@@ -120,18 +121,34 @@ export function MenuOptions(){
             )}
             {!imagesLoading && !imagesError && images.length > 0 && (
               <div className="menu-images" aria-live="polite">
-                {images.map((image) => (
-                  <figure className="menu-images__item" key={image.name}>
-                    <img
-                      src={image.imageUrl}
-                      alt={getImageName(image.name)}
-                      loading="lazy"
-                    />
-                    <figcaption>
-                      {getImageName(image.name)}
-                    </figcaption>
-                  </figure>
-                ))}
+                {images.map((image) => {
+                  const isFlipped = flippedCard === image.name;
+
+                  return (
+                    <button
+                      key = {image.name}
+                      type = "button"
+                      className={`menu-card ${isFlipped ? `is-flipped` : ''}`}
+                      aria-pressed={isFlipped}
+                      aria-label={`${isFlipped ? 'Hide details for' : 'Show details for'} ${image.name}`}
+                      onClick={() => setFlippedCard(isFlipped ? null :image.name)}
+                      >
+
+                      {/* JLopez-2026-Nov-21: Display the front of the card. */}
+                      <span className="menu-card__inner">
+                        <span className="menu-card__face menu-card__front" aria-hidden={isFlipped}>
+                          <img src={image.imageUrl} alt="" loading="lazy" />
+                          <span className="menu-card__caption">{image.name}</span>
+                        </span>
+
+                        {/* JLopez-2026-Nov-21: Display the back information of the card (pending). */}
+                        <span className="menu-card__face menu-card__back" aria-hidden={!isFlipped}>
+                          <span>Loading...</span>
+                        </span>
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             )}
           </section>

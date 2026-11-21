@@ -55,29 +55,86 @@ code {
   margin-block: 1.5rem;
 }
 
-.menu-images__item {
-  margin: 0;
+.menu-card {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  perspective: 1000px;
+  transition: transform 250ms ease;
+}
+
+.menu-card:hover,
+.menu-card:focus-visible {
+  transform: translateY(-4px);
+}
+
+.menu-card:focus-visible {
+  outline: 3px solid #258cfb;
+  outline-offset: 4px;
+}
+
+.menu-card__inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  transform-style: preserve-3d;
+  transition: transform 500ms ease;
+}
+
+.menu-card.is-flipped .menu-card__inner {
+  transform: rotateY(180deg);
+}
+
+.menu-card__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   border: 1px solid #d5e0dc;
   border-radius: 8px;
   background: white;
   box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  backface-visibility: hidden;
 }
 
-.menu-images__item:hover {
-  transform: perspective(900px) rotateY(8deg) translateY(-4px);
-  box-shadow: 0 8px 18px rgb(0 0 0 / 15%);
-}
-
-.menu-images__item img {
+.menu-card__front img {
   display: block;
   width: 100%;
-  height: 220px;
+  flex: 1;
+  min-height: 0;
   object-fit: cover;
 }
 
-.menu-images__item figcaption {
+.menu-card__caption {
   padding: 0.75rem 1rem;
-  text-transform: capitalize;
   text-transform: uppercase;
+}
+
+.menu-card__back {
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  transform: rotateY(180deg);
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-card,
+  .menu-card__inner {
+    transition: none;
+  }
+
+  .menu-card:hover,
+  .menu-card:focus-visible {
+    transform: none;
+  }
 }
