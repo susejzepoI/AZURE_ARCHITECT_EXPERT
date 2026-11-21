@@ -96,7 +96,7 @@ export function MenuOptions(){
 
   return (
     <section>
-      <h1>Our Menu Options</h1> 
+      <h1 className="menu-options__bar">Our Menu Options</h1> 
       <div className="menu-options__bar" role="group" aria-label="Menu categories">
         {options.map((option) => (
           <button
@@ -113,9 +113,6 @@ export function MenuOptions(){
       <div className="menu-options__content">
         {selectedOption && (
           <section aria-labelledby="selected-menu-heading">
-            <h2 id="selected-menu-heading">
-              {selectedOption.replaceAll('-', ' ')}
-            </h2>
             {imagesLoading && <p>Loading images...</p>}
             {imagesError && <p role="alert">Error: {imagesError.message}</p>}
             {!imagesLoading && !imagesError && images.length === 0 && (

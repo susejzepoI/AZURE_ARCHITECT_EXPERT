@@ -64,6 +64,11 @@ code {
   box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
 }
 
+.menu-images__item:hover {
+  transform: perspective(900px) rotateY(8deg) translateY(-4px);
+  box-shadow: 0 8px 18px rgb(0 0 0 / 15%);
+}
+
 .menu-images__item img {
   display: block;
   width: 100%;
