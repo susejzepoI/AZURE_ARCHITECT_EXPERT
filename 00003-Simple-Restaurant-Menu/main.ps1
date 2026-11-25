@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      13-08-2026
-#Modified date:     01-09-2026
+#Modified date:     24-11-2026
 
 [CmdletBinding()]
 param (
@@ -52,4 +52,25 @@ $ContainersName = (
 )
 
 Write-Host "The following containers were created in the storage account: $($pStorageAccountName)" -BackgroundColor Yellow
-$ContainersName | ForEach-Object {Write-Host "Container: [$PSItem]" -BackgroundColor Yellow}
+$ContainersName | 
+        ForEach-Object {
+            Write-Host "Container: [$PSItem]"
+            Write-Host "Uploading files into the container: $($PSItem)"
+            $menu_option_path = "./images/$($PSItem)"
+            Write-Host "Local path: $($menu_option_path)"
+
+            ForEach($image in Get-ChildItem -Path $menu_option_path -name) 
+            {
+                $full_image_path = $($menu_option_path + "/" + $image)
+                Write-Host "Found file: $($image)"
+
+                az storage blob upload `
+                    --account-name $pStorageAccountName `
+                    --container-name $PSItem `
+                    --name "$($image)" `
+                    --file "$($full_image_path)" `
+                    --auth-mode login
+            }
+
+            Write-Host "All files uploaded to container: $($PSItem)" -BackgroundColor Yellow
+        }
