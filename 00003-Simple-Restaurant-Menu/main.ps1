@@ -10,7 +10,8 @@ param (
     [Parameter(mandatory = $true)]
     [string]$RestaurantName,
     [string]$EnvironmentTagName    = 'Environment',
-    [string]$EnvironmentValue      = 'Dev'
+    [Parameter(mandatory = $true)]
+    [string]$EnvironmentValue
 )
 
 $pUserUpn                       = $(az ad signed-in-user show --query userPrincipalName -o tsv)
@@ -23,6 +24,12 @@ $pWebAppName                    = "$($pProject)-$($RestaurantName)-webapp"
 $pServicebusNamespaceName       = "$($pProject)-$($RestaurantName)-sbns"
 $pLocation                      = 'chilecentral'
 $pContainersName                = 'starters,mains,desserts,sides,non-alcoholic-beverages,alcoholic-beverages'
+
+#JLopez-2026/NOV/27: Throw an error if the EnvironmentValue is not one of the accepted values: 'Dev', 'Development', 'Prod' or 'Production'.
+
+if ($EnvironmentValue.ToUpperInvariant() -notin @('DEV', 'DEVELOPMENT', 'PROD', 'PRODUCTION')) {
+    throw "Invalid value for EnvironmentValue. Please specify one of the following: 'Dev', 'Development', 'Prod', or 'Production'."
+}
 
 Write-Host "Starting deployment for project: $($pProject)" -BackgroundColor Green
 Write-Host "Using subscription: $($SubscriptionId)" -BackgroundColor Green
@@ -85,3 +92,13 @@ $ContainersName |
 
             Write-Host "All files uploaded to container: $($PSItem)" -BackgroundColor Yellow
         }
+
+#JLopez-2026/NOV/27: If $EnvironmentValue is equal to 'Prod' or 'Production', then the storage account 
+#                    public access should be disabled. Otherwise, it should be enabled for 'Dev' or 'Test' environments.
+if ($EnvironmentValue.ToUpperInvariant() -eq 'PROD' -or $EnvironmentValue.ToUpperInvariant() -eq 'PRODUCTION') {
+    Write-Host "Disabling public access to the storage account: $($pStorageAccountName)" -BackgroundColor Green
+    az storage account update `
+        --name $pStorageAccountName `
+        --resource-group $pResourceGroupName `
+        --public-network-access Disabled
+}
