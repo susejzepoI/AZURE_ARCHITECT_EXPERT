@@ -1,7 +1,7 @@
 #Author:            Jesus Lopez Mesia
 #Linkedin:          https://www.linkedin.com/in/susejzepol/
 #Created date:      13-08-2026
-#Modified date:     24-11-2026
+#Modified date:     27-11-2026
 
 [CmdletBinding()]
 param (
@@ -13,6 +13,7 @@ param (
     [string]$EnvironmentValue      = 'Dev'
 )
 
+$pUserUpn                       = $(az ad signed-in-user show --query userPrincipalName -o tsv)
 $pRestaurantName                = $RestaurantName.ToLower()
 $pProject                       = '00003'
 $pResourceGroupName             = "$($pProject)-$($pRestaurantName)-simple-restaurant-menu-$($EnvironmentValue)"
@@ -21,7 +22,7 @@ $pBlobStorageContainerName      = "$($RestaurantName)container"
 $pWebAppName                    = "$($pProject)-$($RestaurantName)-webapp"
 $pServicebusNamespaceName       = "$($pProject)-$($RestaurantName)-sbns"
 $pLocation                      = 'chilecentral'
-$pContainersName                = 'starters,mains,desserts,sides,non-alcoholic-beverages,alcoholic-beverages,backups'
+$pContainersName                = 'starters,mains,desserts,sides,non-alcoholic-beverages,alcoholic-beverages'
 
 Write-Host "Starting deployment for project: $($pProject)" -BackgroundColor Green
 Write-Host "Using subscription: $($SubscriptionId)" -BackgroundColor Green
@@ -51,6 +52,15 @@ $ContainersName = (
         --output tsv
 )
 
+Write-Host "Assigning the 'Storage Blob Data Contributor' role to the current account." -BackgroundColor Green
+
+$storageAccountId = $(az storage account show --name $pStorageAccountName --resource-group $pResourceGroupName --query id -o tsv)
+
+az role assignment create `
+    --assignee $pUserUpn `
+    --role "Storage Blob Data Contributor" `
+    --scope $storageAccountId
+
 Write-Host "The following containers were created in the storage account: $($pStorageAccountName)" -BackgroundColor Yellow
 $ContainersName | 
         ForEach-Object {
@@ -69,7 +79,8 @@ $ContainersName |
                     --container-name $PSItem `
                     --name "$($image)" `
                     --file "$($full_image_path)" `
-                    --auth-mode login
+                    --auth-mode login `
+                    --overwrite true
             }
 
             Write-Host "All files uploaded to container: $($PSItem)" -BackgroundColor Yellow
